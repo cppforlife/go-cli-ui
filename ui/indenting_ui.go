@@ -6,62 +6,62 @@ import (
 	. "github.com/cppforlife/go-cli-ui/ui/table"
 )
 
-type indentingUI struct {
+type IndentingUI struct {
 	parent UI
 }
 
-func NewIndentingUI(parent UI) UI {
-	return &indentingUI{parent: parent}
+func NewIndentingUI(parent UI) *IndentingUI {
+	return &IndentingUI{parent: parent}
 }
 
-func (ui *indentingUI) ErrorLinef(pattern string, args ...interface{}) {
+func (ui *IndentingUI) ErrorLinef(pattern string, args ...interface{}) {
 	ui.parent.ErrorLinef("  %s", fmt.Sprintf(pattern, args...))
 }
 
-func (ui *indentingUI) PrintLinef(pattern string, args ...interface{}) {
+func (ui *IndentingUI) PrintLinef(pattern string, args ...interface{}) {
 	ui.parent.PrintLinef("  %s", fmt.Sprintf(pattern, args...))
 }
 
-func (ui *indentingUI) BeginLinef(pattern string, args ...interface{}) {
+func (ui *IndentingUI) BeginLinef(pattern string, args ...interface{}) {
 	ui.parent.BeginLinef("  %s", fmt.Sprintf(pattern, args...))
 }
 
-func (ui *indentingUI) EndLinef(pattern string, args ...interface{}) {
+func (ui *IndentingUI) EndLinef(pattern string, args ...interface{}) {
 	ui.parent.EndLinef(pattern, args...)
 }
 
-func (ui *indentingUI) PrintBlock(block []byte) {
+func (ui *IndentingUI) PrintBlock(block []byte) {
 	ui.parent.PrintBlock(block)
 }
 
-func (ui *indentingUI) PrintErrorBlock(block string) {
+func (ui *IndentingUI) PrintErrorBlock(block string) {
 	ui.parent.PrintErrorBlock(block)
 }
 
-func (ui *indentingUI) PrintTable(table Table) {
+func (ui *IndentingUI) PrintTable(table Table) {
 	ui.parent.PrintTable(table)
 }
 
-func (ui *indentingUI) AskForText(label string) (string, error) {
+func (ui *IndentingUI) AskForText(label string) (string, error) {
 	return ui.parent.AskForText(label)
 }
 
-func (ui *indentingUI) AskForChoice(label string, options []string) (int, error) {
+func (ui *IndentingUI) AskForChoice(label string, options []string) (int, error) {
 	return ui.parent.AskForChoice(label, options)
 }
 
-func (ui *indentingUI) AskForPassword(label string) (string, error) {
+func (ui *IndentingUI) AskForPassword(label string) (string, error) {
 	return ui.parent.AskForPassword(label)
 }
 
-func (ui *indentingUI) AskForConfirmation() error {
+func (ui *IndentingUI) AskForConfirmation() error {
 	return ui.parent.AskForConfirmation()
 }
 
-func (ui *indentingUI) IsInteractive() bool {
+func (ui *IndentingUI) IsInteractive() bool {
 	return ui.parent.IsInteractive()
 }
 
-func (ui *indentingUI) Flush() {
+func (ui *IndentingUI) Flush() {
 	ui.parent.Flush()
 }

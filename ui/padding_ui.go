@@ -13,79 +13,79 @@ const (
 	paddingUIModeAskText
 )
 
-type paddingUI struct {
+type PaddingUI struct {
 	parent   UI
 	prevMode paddingUIMode
 }
 
-func NewPaddingUI(parent UI) UI {
-	return &paddingUI{parent: parent}
+func NewPaddingUI(parent UI) *PaddingUI {
+	return &PaddingUI{parent: parent}
 }
 
-func (ui *paddingUI) ErrorLinef(pattern string, args ...interface{}) {
+func (ui *PaddingUI) ErrorLinef(pattern string, args ...interface{}) {
 	ui.padBefore(paddingUIModeAuto)
 	ui.parent.ErrorLinef(pattern, args...)
 }
 
-func (ui *paddingUI) PrintLinef(pattern string, args ...interface{}) {
+func (ui *PaddingUI) PrintLinef(pattern string, args ...interface{}) {
 	ui.padBefore(paddingUIModeAuto)
 	ui.parent.PrintLinef(pattern, args...)
 }
 
-func (ui *paddingUI) BeginLinef(pattern string, args ...interface{}) {
+func (ui *PaddingUI) BeginLinef(pattern string, args ...interface{}) {
 	ui.padBefore(paddingUIModeRaw)
 	ui.parent.BeginLinef(pattern, args...)
 }
 
-func (ui *paddingUI) EndLinef(pattern string, args ...interface{}) {
+func (ui *PaddingUI) EndLinef(pattern string, args ...interface{}) {
 	ui.padBefore(paddingUIModeRaw)
 	ui.parent.EndLinef(pattern, args...)
 }
 
-func (ui *paddingUI) PrintBlock(block []byte) {
+func (ui *PaddingUI) PrintBlock(block []byte) {
 	ui.padBefore(paddingUIModeRaw)
 	ui.parent.PrintBlock(block)
 }
 
-func (ui *paddingUI) PrintErrorBlock(block string) {
+func (ui *PaddingUI) PrintErrorBlock(block string) {
 	ui.padBefore(paddingUIModeRaw)
 	ui.parent.PrintErrorBlock(block)
 }
 
-func (ui *paddingUI) PrintTable(table Table) {
+func (ui *PaddingUI) PrintTable(table Table) {
 	ui.padBefore(paddingUIModeAuto)
 	ui.parent.PrintTable(table)
 }
 
-func (ui *paddingUI) AskForText(label string) (string, error) {
+func (ui *PaddingUI) AskForText(label string) (string, error) {
 	ui.padBefore(paddingUIModeAskText)
 	return ui.parent.AskForText(label)
 }
 
-func (ui *paddingUI) AskForChoice(label string, options []string) (int, error) {
+func (ui *PaddingUI) AskForChoice(label string, options []string) (int, error) {
 	ui.padBefore(paddingUIModeAuto)
 	return ui.parent.AskForChoice(label, options)
 }
 
-func (ui *paddingUI) AskForPassword(label string) (string, error) {
+func (ui *PaddingUI) AskForPassword(label string) (string, error) {
 	ui.padBefore(paddingUIModeAskText)
 	return ui.parent.AskForPassword(label)
 }
 
-func (ui *paddingUI) AskForConfirmation() error {
+func (ui *PaddingUI) AskForConfirmation() error {
 	ui.padBefore(paddingUIModeAuto)
 	return ui.parent.AskForConfirmation()
 }
 
-func (ui *paddingUI) IsInteractive() bool {
+func (ui *PaddingUI) IsInteractive() bool {
 	return ui.parent.IsInteractive()
 }
 
-func (ui *paddingUI) Flush() {
+func (ui *PaddingUI) Flush() {
 	ui.parent.Flush()
 }
 
-func (ui *paddingUI) padBefore(currMode paddingUIMode) {
+func (ui *PaddingUI) padBefore(currMode paddingUIMode) {
 	switch {
 	case ui.prevMode == paddingUIModeNone:
 		// do nothing on the first time UI is called

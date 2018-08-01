@@ -9,7 +9,7 @@ import (
 	. "github.com/cppforlife/go-cli-ui/ui/table"
 )
 
-type jsonUI struct {
+type JSONUI struct {
 	parent UI
 	uiResp uiResp
 
@@ -30,35 +30,35 @@ type tableResp struct {
 	Notes   []string
 }
 
-func NewJSONUI(parent UI, logger ExternalLogger) UI {
-	return &jsonUI{parent: parent, logTag: "JSONUI", logger: logger}
+func NewJSONUI(parent UI, logger ExternalLogger) *JSONUI {
+	return &JSONUI{parent: parent, logTag: "JSONUI", logger: logger}
 }
 
-func (ui *jsonUI) ErrorLinef(pattern string, args ...interface{}) {
+func (ui *JSONUI) ErrorLinef(pattern string, args ...interface{}) {
 	ui.addLine(pattern, args)
 }
 
-func (ui *jsonUI) PrintLinef(pattern string, args ...interface{}) {
+func (ui *JSONUI) PrintLinef(pattern string, args ...interface{}) {
 	ui.addLine(pattern, args)
 }
 
-func (ui *jsonUI) BeginLinef(pattern string, args ...interface{}) {
+func (ui *JSONUI) BeginLinef(pattern string, args ...interface{}) {
 	ui.addLine(pattern, args)
 }
 
-func (ui *jsonUI) EndLinef(pattern string, args ...interface{}) {
+func (ui *JSONUI) EndLinef(pattern string, args ...interface{}) {
 	ui.addLine(pattern, args)
 }
 
-func (ui *jsonUI) PrintBlock(block []byte) {
+func (ui *JSONUI) PrintBlock(block []byte) {
 	ui.uiResp.Blocks = append(ui.uiResp.Blocks, string(block))
 }
 
-func (ui *jsonUI) PrintErrorBlock(block string) {
+func (ui *JSONUI) PrintErrorBlock(block string) {
 	ui.uiResp.Blocks = append(ui.uiResp.Blocks, block)
 }
 
-func (ui *jsonUI) PrintTable(table Table) {
+func (ui *JSONUI) PrintTable(table Table) {
 	table.FillFirstColumn = true
 
 	header := map[string]string{}
@@ -98,27 +98,27 @@ func (ui *jsonUI) PrintTable(table Table) {
 	ui.uiResp.Tables = append(ui.uiResp.Tables, resp)
 }
 
-func (ui *jsonUI) AskForText(_ string) (string, error) {
+func (ui *JSONUI) AskForText(_ string) (string, error) {
 	panic("Cannot ask for input in JSON UI")
 }
 
-func (ui *jsonUI) AskForChoice(_ string, _ []string) (int, error) {
+func (ui *JSONUI) AskForChoice(_ string, _ []string) (int, error) {
 	panic("Cannot ask for a choice in JSON UI")
 }
 
-func (ui *jsonUI) AskForPassword(_ string) (string, error) {
+func (ui *JSONUI) AskForPassword(_ string) (string, error) {
 	panic("Cannot ask for password in JSON UI")
 }
 
-func (ui *jsonUI) AskForConfirmation() error {
+func (ui *JSONUI) AskForConfirmation() error {
 	panic("Cannot ask for confirmation in JSON UI")
 }
 
-func (ui *jsonUI) IsInteractive() bool {
+func (ui *JSONUI) IsInteractive() bool {
 	return ui.parent.IsInteractive()
 }
 
-func (ui *jsonUI) Flush() {
+func (ui *JSONUI) Flush() {
 	defer ui.parent.Flush()
 
 	if !reflect.DeepEqual(ui.uiResp, uiResp{}) {
@@ -132,7 +132,7 @@ func (ui *jsonUI) Flush() {
 	}
 }
 
-func (ui *jsonUI) stringRows(header []Header, rows [][]Value) []map[string]string {
+func (ui *JSONUI) stringRows(header []Header, rows [][]Value) []map[string]string {
 	result := []map[string]string{}
 
 	for _, row := range rows {
@@ -152,7 +152,7 @@ func (ui *jsonUI) stringRows(header []Header, rows [][]Value) []map[string]strin
 	return result
 }
 
-func (ui *jsonUI) addLine(pattern string, args []interface{}) {
+func (ui *JSONUI) addLine(pattern string, args []interface{}) {
 	msg := fmt.Sprintf(pattern, args...)
 	ui.uiResp.Lines = append(ui.uiResp.Lines, msg)
 	ui.logger.Debug(ui.logTag, msg)

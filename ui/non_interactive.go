@@ -4,63 +4,63 @@ import (
 	. "github.com/cppforlife/go-cli-ui/ui/table"
 )
 
-type nonInteractiveUI struct {
+type NonInteractiveUI struct {
 	parent UI
 }
 
-func NewNonInteractiveUI(parent UI) UI {
-	return &nonInteractiveUI{parent: parent}
+func NewNonInteractiveUI(parent UI) *NonInteractiveUI {
+	return &NonInteractiveUI{parent: parent}
 }
 
-func (ui *nonInteractiveUI) ErrorLinef(pattern string, args ...interface{}) {
+func (ui *NonInteractiveUI) ErrorLinef(pattern string, args ...interface{}) {
 	ui.parent.ErrorLinef(pattern, args...)
 }
 
-func (ui *nonInteractiveUI) PrintLinef(pattern string, args ...interface{}) {
+func (ui *NonInteractiveUI) PrintLinef(pattern string, args ...interface{}) {
 	ui.parent.PrintLinef(pattern, args...)
 }
 
-func (ui *nonInteractiveUI) BeginLinef(pattern string, args ...interface{}) {
+func (ui *NonInteractiveUI) BeginLinef(pattern string, args ...interface{}) {
 	ui.parent.BeginLinef(pattern, args...)
 }
 
-func (ui *nonInteractiveUI) EndLinef(pattern string, args ...interface{}) {
+func (ui *NonInteractiveUI) EndLinef(pattern string, args ...interface{}) {
 	ui.parent.EndLinef(pattern, args...)
 }
 
-func (ui *nonInteractiveUI) PrintBlock(block []byte) {
+func (ui *NonInteractiveUI) PrintBlock(block []byte) {
 	ui.parent.PrintBlock(block)
 }
 
-func (ui *nonInteractiveUI) PrintErrorBlock(block string) {
+func (ui *NonInteractiveUI) PrintErrorBlock(block string) {
 	ui.parent.PrintErrorBlock(block)
 }
 
-func (ui *nonInteractiveUI) PrintTable(table Table) {
+func (ui *NonInteractiveUI) PrintTable(table Table) {
 	ui.parent.PrintTable(table)
 }
 
-func (ui *nonInteractiveUI) AskForText(label string) (string, error) {
+func (ui *NonInteractiveUI) AskForText(label string) (string, error) {
 	panic("Cannot ask for input in non-interactive UI")
 }
 
-func (ui *nonInteractiveUI) AskForChoice(label string, options []string) (int, error) {
+func (ui *NonInteractiveUI) AskForChoice(label string, options []string) (int, error) {
 	panic("Cannot ask for a choice in non-interactive UI")
 }
 
-func (ui *nonInteractiveUI) AskForPassword(label string) (string, error) {
+func (ui *NonInteractiveUI) AskForPassword(label string) (string, error) {
 	panic("Cannot ask for password in non-interactive UI")
 }
 
-func (ui *nonInteractiveUI) AskForConfirmation() error {
+func (ui *NonInteractiveUI) AskForConfirmation() error {
 	// Always respond successfully
 	return nil
 }
 
-func (ui *nonInteractiveUI) IsInteractive() bool {
+func (ui *NonInteractiveUI) IsInteractive() bool {
 	return false
 }
 
-func (ui *nonInteractiveUI) Flush() {
+func (ui *NonInteractiveUI) Flush() {
 	ui.parent.Flush()
 }

@@ -13,7 +13,7 @@ type ColorUI struct {
 	boldFunc func(string, ...interface{}) string
 }
 
-func NewColorUI(parent UI) UI {
+func NewColorUI(parent UI) *ColorUI {
 	return &ColorUI{
 		parent:   parent,
 		okFunc:   color.New(color.FgGreen).SprintfFunc(),
