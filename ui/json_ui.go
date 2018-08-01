@@ -11,19 +11,19 @@ import (
 
 type JSONUI struct {
 	parent UI
-	uiResp uiResp
+	uiResp JSONUIResp
 
 	logTag string
 	logger ExternalLogger
 }
 
-type uiResp struct {
-	Tables []tableResp
+type JSONUIResp struct {
+	Tables []JSONUITableResp
 	Blocks []string
 	Lines  []string
 }
 
-type tableResp struct {
+type JSONUITableResp struct {
 	Content string
 	Header  map[string]string
 	Rows    []map[string]string
@@ -88,7 +88,7 @@ func (ui *JSONUI) PrintTable(table Table) {
 		table.Header = rawHeaders
 	}
 
-	resp := tableResp{
+	resp := JSONUITableResp{
 		Content: table.Content,
 		Header:  header,
 		Rows:    ui.stringRows(table.Header, table.AsRows()),
@@ -121,7 +121,7 @@ func (ui *JSONUI) IsInteractive() bool {
 func (ui *JSONUI) Flush() {
 	defer ui.parent.Flush()
 
-	if !reflect.DeepEqual(ui.uiResp, uiResp{}) {
+	if !reflect.DeepEqual(ui.uiResp, JSONUIResp{}) {
 		bytes, err := json.MarshalIndent(ui.uiResp, "", "    ")
 		if err != nil {
 			ui.logger.Error(ui.logTag, "Failed to marshal UI response")
