@@ -233,7 +233,7 @@ r2c1|r2c2|
 				table.Print(buf)
 				Expect("\n" + buf.String()).To(Equal(`
 r1c1|r1c2|
-~...|r2c2|
+^...|r2c2|
 r3c1|r3c2|
 `))
 			})
@@ -357,9 +357,9 @@ r2c1|r2c2|
 			table.Print(buf)
 			Expect("\n" + buf.String()).To(Equal(`
 dup..|dup|
-~....|dup|
+^....|dup|
 dup2.|dup|
-~....|dup|
+^....|dup|
 other|dup|
 `))
 		})
@@ -417,9 +417,9 @@ other|dup|
 			table.Print(buf)
 			Expect("\n" + buf.String()).To(Equal(`
 dup.|dup|
-~...|dup|
+^...|dup|
 dup2|dup|
-~...|dup|
+^...|dup|
 `))
 		})
 
@@ -443,9 +443,9 @@ dup2|dup|
 			table.Print(buf)
 			Expect("\n" + buf.String()).To(Equal(`
 dup..|1|
-~....|2|
+^....|2|
 dup2.|3|
-~....|4|
+^....|4|
 other|5|
 `))
 		})
@@ -463,7 +463,7 @@ other|5|
 			table.Print(buf)
 			Expect("\n" + buf.String()).To(Equal(`
 -|-|
-~|-|
+^|-|
 `))
 		})
 
