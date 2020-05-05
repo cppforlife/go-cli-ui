@@ -9,9 +9,10 @@ fi
 set -u
 
 go fmt ./...
-go test ./...
+go test -test.v ./... $@
 
 go build ./ui/
+go build ./errors/
 go build -o /dev/null github.com/cppforlife/go-cli-ui/examples/...
 
 echo SUCCESS
