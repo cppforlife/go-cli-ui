@@ -43,6 +43,16 @@ Applying create deployment/frontend (apps/v1) namespace: default:
  (reason: Invalid)
 `,
 		},
+		{
+			// TODO may be deal with this better
+			Description: "uneven bracing",
+			Actual:      `Applying create service/redis-master (v1) namespace: default: Creating resource service/redis-master (v1) namespace: default: Service in version "v1" cannot be handled as a Service: v1.Service.Spec: v1.ServiceSpec.Ports: []v1.ServicePort: decode slice: expect [ or n, but found ", error found in #10 byte of ...|{"ports":"foo","sele|..., bigger context ...|s-master","namespace":"default"},"spec":{"ports":"foo","selector":{"app":"redis","kapp.k14s.io/app":|... (reason: BadRequest)`,
+			Expected: `
+Applying create service/redis-master (v1) namespace: default:
+  Creating resource service/redis-master (v1) namespace: default:
+    Service in version "v1" cannot be handled as a Service: v1.Service.Spec: v1.ServiceSpec.Ports: []v1.ServicePort: decode slice: expect [ or n, but found ", error found in #10 byte of ...|{"ports":"foo","sele|..., bigger context ...|s-master","namespace":"default"},"spec":{"ports":"foo","selector":{"app":"redis","kapp.k14s.io/app":|... (reason: BadRequest)
+`,
+		},
 	}
 
 	for _, test := range tests {

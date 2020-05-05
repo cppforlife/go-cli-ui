@@ -46,6 +46,8 @@ type ErrorPiece struct {
 
 	ReorganizePiecesAroundCommas bool
 	FormatPiecesAsList           bool
+
+	closed bool
 }
 
 func NewErrorPiecesFromString(str string) (*ErrorPiece, bool) {
@@ -70,6 +72,7 @@ func NewErrorPiecesFromString(str string) (*ErrorPiece, bool) {
 				continue
 
 			case braketClose, curlyClose, parenClose:
+				stack[len(stack)-1].closed = true
 				stack = stack[:len(stack)-1]
 				continue
 			}
@@ -84,6 +87,7 @@ func NewErrorPiecesFromString(str string) (*ErrorPiece, bool) {
 
 		case checkBackward(str, i, rawClose):
 			stack[len(stack)-1].AddStr(charStr)
+			stack[len(stack)-1].closed = true
 			stack = stack[:len(stack)-1]
 
 		default:
@@ -206,7 +210,9 @@ func (p *ErrorPiece) AsString() string {
 		for _, piece := range p.Pieces {
 			result += piece.AsString()
 		}
-		result += sepClosers[p.ContainerType]
+		if p.closed {
+			result += sepClosers[p.ContainerType]
+		}
 	}
 
 	return result

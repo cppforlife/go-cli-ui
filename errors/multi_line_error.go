@@ -28,10 +28,7 @@ func (e MultiLineError) Error() (result string) {
 
 	lines := strings.Split(e.err.Error(), "\n")
 
-	firstLineRootPiece, complete := NewErrorPiecesFromString(lines[0])
-	if !complete {
-		return e.err.Error() // cannot deconstruct error message, return original
-	}
+	firstLineRootPiece, _ := NewErrorPiecesFromString(lines[0])
 
 	for _, piece := range firstLineRootPiece.Pieces {
 		// Do not split withing container pieces
