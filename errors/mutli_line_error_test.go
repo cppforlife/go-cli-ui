@@ -53,6 +53,17 @@ Applying create service/redis-master (v1) namespace: default:
     Service in version "v1" cannot be handled as a Service: v1.Service.Spec: v1.ServiceSpec.Ports: []v1.ServicePort: decode slice: expect [ or n, but found ", error found in #10 byte of ...|{"ports":"foo","sele|..., bigger context ...|s-master","namespace":"default"},"spec":{"ports":"foo","selector":{"app":"redis","kapp.k14s.io/app":|... (reason: BadRequest)
 `,
 		},
+		{
+			Description: "ytt example",
+			Actual:      `Overlaying data values (in following order: values.yml, values.yml, additional data values): Overlaying additional data values on top of data values from files (marked as @data/values): Document on line key 'dom' (kv arg):1: Map item (key 'dom') on line key 'dom' (kv arg):1: Expected number of matched nodes to be 1, but was 0`,
+			Expected: `
+Overlaying data values (in following order: values.yml, values.yml, additional data values):
+  Overlaying additional data values on top of data values from files (marked as @data/values):
+    Document on line key 'dom' (kv arg):1:
+      Map item (key 'dom') on line key 'dom' (kv arg):1:
+        Expected number of matched nodes to be 1, but was 0
+`,
+		},
 	}
 
 	for _, test := range tests {
