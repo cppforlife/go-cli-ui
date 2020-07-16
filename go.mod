@@ -3,13 +3,12 @@ module github.com/cppforlife/go-cli-ui
 go 1.13
 
 require (
-	github.com/fatih/color v1.7.0
+	github.com/cppforlife/color v1.9.1-0.20200716202919-6706ac40b835
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/golang/protobuf v1.4.1 // indirect
 	github.com/hpcloud/tail v1.0.1-0.20180514194441-a1dbeea552b7 // indirect
 	github.com/kr/pty v1.1.8 // indirect
-	github.com/mattn/go-colorable v0.0.9 // indirect
-	github.com/mattn/go-isatty v0.0.3
+	github.com/mattn/go-isatty v0.0.11
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.1
 	github.com/vito/go-interact v0.0.0-20171111012221-fa338ed9e9ec

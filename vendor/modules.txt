@@ -1,14 +1,14 @@
-# github.com/fatih/color v1.7.0
-github.com/fatih/color
+# github.com/cppforlife/color v1.9.1-0.20200716202919-6706ac40b835
+github.com/cppforlife/color
 # github.com/hpcloud/tail v1.0.1-0.20180514194441-a1dbeea552b7
 github.com/hpcloud/tail
 github.com/hpcloud/tail/ratelimiter
 github.com/hpcloud/tail/util
 github.com/hpcloud/tail/watch
 github.com/hpcloud/tail/winfile
-# github.com/mattn/go-colorable v0.0.9
+# github.com/mattn/go-colorable v0.1.4
 github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.3
+# github.com/mattn/go-isatty v0.0.11
 github.com/mattn/go-isatty
 # github.com/onsi/ginkgo v1.6.0
 github.com/onsi/ginkgo
@@ -51,7 +51,7 @@ golang.org/x/crypto/ssh/terminal
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20191005200804-aed5e4c7ecf9
+# golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.0

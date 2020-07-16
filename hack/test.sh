@@ -9,6 +9,9 @@ fi
 set -u
 
 go fmt ./...
+go mod vendor
+go mod tidy
+
 go test -test.v ./... $@
 
 go build ./ui/
