@@ -16,10 +16,14 @@ func NewConfUI(logger ExternalLogger) *ConfUI {
 
 	writerUI := NewConsoleUI(logger)
 	ui = NewPaddingUI(writerUI)
+	isTTY := writerUI.IsTTY()
+	if !isTTY {
+		ui = NewNonTTYUI(ui)
+	}
 
 	return &ConfUI{
 		parent: ui,
-		isTTY:  writerUI.IsTTY(),
+		isTTY:  isTTY,
 		logger: logger,
 	}
 }
@@ -33,7 +37,7 @@ func NewWrappingConfUI(parent UI, logger ExternalLogger) *ConfUI {
 }
 
 func (ui *ConfUI) EnableTTY(force bool) {
-	if !ui.isTTY && !force {
+	if !force {
 		ui.parent = NewNonTTYUI(ui.parent)
 	}
 }
