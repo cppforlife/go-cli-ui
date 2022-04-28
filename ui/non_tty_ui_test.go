@@ -1,73 +1,84 @@
 package ui_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	. "github.com/cppforlife/go-cli-ui/ui"
 	fakeui "github.com/cppforlife/go-cli-ui/ui/fakes"
 	. "github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("NonTTYUI", func() {
-	var (
-		parentUI *fakeui.FakeUI
-		ui       UI
-	)
+func TestNonTTYUI(t *testing.T) {
+	t.Run("ErrorLinef", func(t *testing.T) {
+		t.Run("includes in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
 
-	BeforeEach(func() {
-		parentUI = &fakeui.FakeUI{}
-		ui = NewNonTTYUI(parentUI)
-	})
-
-	Describe("ErrorLinef", func() {
-		It("includes in Lines", func() {
 			ui.ErrorLinef("fake-line1")
-			Expect(parentUI.Said).To(BeEmpty())
-			Expect(parentUI.Errors).To(Equal([]string{"fake-line1"}))
+			assert.Equal(t, len(parentUI.Said), 0)
+			assert.Equal(t, parentUI.Errors, []string{"fake-line1"})
 		})
 	})
 
-	Describe("PrintLinef", func() {
-		It("does not include in Lines", func() {
+	t.Run("PrintLinef", func(t *testing.T) {
+		t.Run("does not include in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.PrintLinef("fake-line1")
-			Expect(parentUI.Said).To(BeEmpty())
-			Expect(parentUI.Errors).To(BeEmpty())
+			assert.Equal(t, len(parentUI.Said), 0)
+			assert.Equal(t, len(parentUI.Errors), 0)
 		})
 	})
 
-	Describe("BeginLinef", func() {
-		It("does not include in Lines", func() {
+	t.Run("BeginLinef", func(t *testing.T) {
+		t.Run("does not include in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.BeginLinef("fake-line1")
-			Expect(parentUI.Said).To(BeEmpty())
-			Expect(parentUI.Errors).To(BeEmpty())
+			assert.Equal(t, len(parentUI.Said), 0)
+			assert.Equal(t, len(parentUI.Errors), 0)
 		})
 	})
 
-	Describe("EndLinef", func() {
-		It("does not include in Lines", func() {
+	t.Run("EndLinef", func(t *testing.T) {
+		t.Run("does not include in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.EndLinef("fake-line1")
-			Expect(parentUI.Said).To(BeEmpty())
-			Expect(parentUI.Errors).To(BeEmpty())
+			assert.Equal(t, len(parentUI.Said), 0)
+			assert.Equal(t, len(parentUI.Errors), 0)
 		})
 	})
 
-	Describe("PrintBlock", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("PrintBlock", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.PrintBlock([]byte("block"))
-			Expect(parentUI.Blocks).To(Equal([]string{"block"}))
+			assert.Equal(t, parentUI.Blocks, []string{"block"})
 		})
 	})
 
-	Describe("PrintErrorBlock", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("PrintErrorBlock", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.PrintBlock([]byte("block"))
-			Expect(parentUI.Blocks).To(Equal([]string{"block"}))
+			assert.Equal(t, parentUI.Blocks, []string{"block"})
 		})
 	})
 
-	Describe("PrintTable", func() {
-		It("delegates to the parent UI with re-configured table", func() {
+	t.Run("PrintTable", func(t *testing.T) {
+		t.Run("delegates to the parent UI with re-configured table", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.PrintTable(Table{
 				Title:  "title",
 				Header: []Header{NewHeader("header1")},
@@ -91,7 +102,7 @@ var _ = Describe("NonTTYUI", func() {
 				BorderStr:       "",
 			})
 
-			Expect(parentUI.Table).To(Equal(Table{
+			assert.Equal(t, parentUI.Table, Table{
 				Title: "",
 				Header: []Header{
 					{Key: "header1", Title: "header1", Hidden: false},
@@ -116,24 +127,30 @@ var _ = Describe("NonTTYUI", func() {
 				DataOnly:        true,
 				BackgroundStr:   "-",
 				BorderStr:       "\t",
-			}))
+			})
 		})
 	})
 
-	Describe("IsInteractive", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("IsInteractive", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			parentUI.Interactive = true
-			Expect(ui.IsInteractive()).To(BeTrue())
+			assert.Equal(t, ui.IsInteractive(), true)
 
 			parentUI.Interactive = false
-			Expect(ui.IsInteractive()).To(BeFalse())
+			assert.Equal(t, ui.IsInteractive(), false)
 		})
 	})
 
-	Describe("Flush", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("Flush", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonTTYUI(parentUI)
+
 			ui.Flush()
-			Expect(parentUI.Flushed).To(BeTrue())
+			assert.Equal(t, parentUI.Flushed, true)
 		})
 	})
-})
+}

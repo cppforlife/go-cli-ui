@@ -3,24 +3,16 @@ package table_test
 import (
 	"bytes"
 	"strings"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	. "github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("Table", func() {
-	var (
-		buf *bytes.Buffer
-	)
-
-	BeforeEach(func() {
-		buf = bytes.NewBufferString("")
-	})
-
-	Describe("Print", func() {
-		It("prints a table in default formatting (borders, empties, etc.)", func() {
+func TestTable(t *testing.T) {
+	t.Run("Print", func(t *testing.T) {
+		t.Run("prints a table in default formatting (borders, empties, etc.)", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 				Header: []Header{
@@ -36,7 +28,7 @@ var _ = Describe("Table", func() {
 				Notes: []string{"note1", "note2"},
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(strings.Replace(`
+			assert.Equal(t, "\n"+buf.String(), strings.Replace(`
 Header1  Header2  +
 r1c1     r1c2  +
 r2c1     r2c2  +
@@ -45,10 +37,11 @@ note1
 note2
 
 2 things
-`, "+", "", -1)))
+`, "+", "", -1))
 		})
 
-		It("prints a table with header if Header is specified", func() {
+		t.Run("prints a table with header if Header is specified", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 				Header: []Header{
@@ -66,7 +59,7 @@ note2
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 Header1|Header2|
 r1c1...|r1c2|
 r2c1...|r2c2|
@@ -75,10 +68,11 @@ note1
 note2
 
 2 things
-`))
+`)
 		})
 
-		It("prints a table without number of records if content is not specified", func() {
+		t.Run("prints a table without number of records if content is not specified", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "",
 				Header: []Header{
@@ -96,17 +90,18 @@ note2
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 Header1|Header2|
 r1c1...|r1c2|
 r2c1...|r2c2|
 
 note1
 note2
-`))
+`)
 		})
 
-		It("prints a table sorted based on SortBy", func() {
+		t.Run("prints a table sorted based on SortBy", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				SortBy: []ColumnSort{{Column: 1}, {Column: 0, Asc: true}},
 
@@ -122,16 +117,17 @@ note2
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 d|100|
 c|20|
 d|20|
 b|0|
 a|-1|
-`))
+`)
 		})
 
-		It("prints a table without a header if Header is not specified", func() {
+		t.Run("prints a table without a header if Header is not specified", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 
@@ -144,13 +140,14 @@ a|-1|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 r1c1|r1c2|
 r2c1|r2c2|
-`))
+`)
 		})
 
-		It("prints a table with a title and a header", func() {
+		t.Run("prints a table with a title and a header", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Title:   "Title",
 				Content: "things",
@@ -169,7 +166,7 @@ r2c1|r2c2|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 Title
 
 Header1|Header2|
@@ -180,11 +177,12 @@ note1
 note2
 
 2 things
-`))
+`)
 		})
 
-		Context("when sections are provided", func() {
-			It("prints a table *without* sections for now", func() {
+		t.Run("when sections are provided", func(t *testing.T) {
+			t.Run("prints a table *without* sections for now", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				table := Table{
 					Content: "things",
 					Sections: []Section{
@@ -203,13 +201,14 @@ note2
 					BorderStr:     "|",
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 r1c1|r1c2|
 r2c1|r2c2|
-`))
+`)
 			})
 
-			It("prints a table with first column set", func() {
+			t.Run("prints a table with first column set", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				table := Table{
 					Content: "things",
 					Sections: []Section{
@@ -231,14 +230,15 @@ r2c1|r2c2|
 					BorderStr:     "|",
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 r1c1|r1c2|
 ^...|r2c2|
 r3c1|r3c2|
-`))
+`)
 			})
 
-			It("prints a table with first column filled for all rows when option is set", func() {
+			t.Run("prints a table with first column filled for all rows when option is set", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				table := Table{
 					Content: "things",
 					Sections: []Section{
@@ -268,17 +268,18 @@ r3c1|r3c2|
 					BorderStr:       "|",
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 r1c1|r1c2|
 r1c1|r2c2|
 r3c1|r3c2|
 r4c1|r4c2|
 r4c1|r5c2|
 r4c1|r6c2|
-`))
+`)
 			})
 
-			It("prints a footer including the counts for rows in sections", func() {
+			t.Run("prints a footer including the counts for rows in sections", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				table := Table{
 					Content: "things",
 					Header: []Header{
@@ -307,7 +308,7 @@ r4c1|r6c2|
 					BorderStr:       "|",
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 Header1|Header2|
 s1c1...|s1r1c2|
 s1c1...|s1r2c2|
@@ -315,11 +316,12 @@ r3c1...|r3c2|
 r4c1...|r4c2|
 
 4 things
-`))
+`)
 			})
 		})
 
-		It("prints values in table that span multiple lines", func() {
+		t.Run("prints values in table that span multiple lines", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 
@@ -332,14 +334,15 @@ r4c1...|r4c2|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 r1c1|r1c2.1|
 ....|r1c2.2|
 r2c1|r2c2|
-`))
+`)
 		})
 
-		It("removes duplicate values in the first column", func() {
+		t.Run("removes duplicate values in the first column", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 
@@ -355,16 +358,17 @@ r2c1|r2c2|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 dup..|dup|
 ^....|dup|
 dup2.|dup|
 ^....|dup|
 other|dup|
-`))
+`)
 		})
 
-		It("does not removes duplicate values in the first column if FillFirstColumn is true", func() {
+		t.Run("does not removes duplicate values in the first column if FillFirstColumn is true", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 
@@ -381,16 +385,17 @@ other|dup|
 				BorderStr:       "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 dup..|dup|
 dup..|dup|
 dup2.|dup|
 dup2.|dup|
 other|dup|
-`))
+`)
 		})
 
-		It("removes duplicate values in the first column even with sections", func() {
+		t.Run("removes duplicate values in the first column even with sections", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 
@@ -415,15 +420,16 @@ other|dup|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 dup.|dup|
 ^...|dup|
 dup2|dup|
 ^...|dup|
-`))
+`)
 		})
 
-		It("removes duplicate values in the first column after sorting", func() {
+		t.Run("removes duplicate values in the first column after sorting", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "things",
 
@@ -441,16 +447,17 @@ dup2|dup|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 dup..|1|
 ^....|2|
 dup2.|3|
 ^....|4|
 other|5|
-`))
+`)
 		})
 
-		It("prints empty values as dashes", func() {
+		t.Run("prints empty values as dashes", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Rows: [][]Value{
 					{ValueString{S: ""}, ValueNone{}},
@@ -461,13 +468,14 @@ other|5|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 -|-|
 ^|-|
-`))
+`)
 		})
 
-		It("prints empty tables without rows and section", func() {
+		t.Run("prints empty tables without rows and section", func(t *testing.T) {
+			buf := bytes.NewBufferString("")
 			table := Table{
 				Content: "content",
 				Header: []Header{
@@ -478,15 +486,16 @@ other|5|
 				BorderStr:     "|",
 			}
 			table.Print(buf)
-			Expect("\n" + buf.String()).To(Equal(`
+			assert.Equal(t, "\n"+buf.String(), `
 Header1|Header2|
 
 0 content
-`))
+`)
 		})
 
-		Context("table has Transpose:true", func() {
-			It("prints as transposed table", func() {
+		t.Run("table has Transpose:true", func(t *testing.T) {
+			t.Run("prints as transposed table", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				table := Table{
 					Content: "errands",
 					Header: []Header{
@@ -503,7 +512,7 @@ Header1|Header2|
 					Transpose:     true,
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 Header1.....|r1c1|
 OtherHeader2|longr1c2|
 Header3.....|r1c3|
@@ -513,10 +522,11 @@ OtherHeader2|r2c2|
 Header3.....|r2c3|
 
 2 errands
-`))
+`)
 			})
 
-			It("prints a filtered transposed table", func() {
+			t.Run("prints a filtered transposed table", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				nonVisibleHeader := NewHeader("Header3")
 				nonVisibleHeader.Hidden = true
 
@@ -535,16 +545,17 @@ Header3.....|r2c3|
 					Transpose: true,
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 Header1|v1|
 Header2|v2|
 
 1 errands
-`))
+`)
 			})
 
-			Context("when table also has a SortBy value set", func() {
-				It("prints as transposed table with sections sorted by the SortBy", func() {
+			t.Run("when table also has a SortBy value set", func(t *testing.T) {
+				t.Run("prints as transposed table with sections sorted by the SortBy", func(t *testing.T) {
+					buf := bytes.NewBufferString("")
 					table := Table{
 						Content: "errands",
 						Header: []Header{
@@ -564,7 +575,7 @@ Header2|v2|
 						Transpose:     true,
 					}
 					table.Print(buf)
-					Expect("\n" + buf.String()).To(Equal(`
+					assert.Equal(t, "\n"+buf.String(), `
 Header1.....|r1c1|
 OtherHeader2|longr1c2|
 Header3.....|r1c3|
@@ -574,13 +585,14 @@ OtherHeader2|r2c2|
 Header3.....|r2c3|
 
 2 errands
-`))
+`)
 				})
 			})
 		})
 
-		Context("when column filtering is used", func() {
-			It("prints all non-filtered out columns", func() {
+		t.Run("when column filtering is used", func(t *testing.T) {
+			t.Run("prints all non-filtered out columns", func(t *testing.T) {
+				buf := bytes.NewBufferString("")
 				nonVisibleHeader := NewHeader("Header3")
 				nonVisibleHeader.Hidden = true
 
@@ -598,18 +610,18 @@ Header3.....|r2c3|
 					BorderStr: "|",
 				}
 				table.Print(buf)
-				Expect("\n" + buf.String()).To(Equal(`
+				assert.Equal(t, "\n"+buf.String(), `
 Header1|Header2|
 v1     |v2|
 
 1 content
-`))
+`)
 			})
 		})
 	})
 
-	Describe("AddColumn", func() {
-		It("returns an updated table with the new column", func() {
+	t.Run("AddColumn", func(t *testing.T) {
+		t.Run("returns an updated table with the new column", func(t *testing.T) {
 			table := Table{
 				Content: "content",
 				Header: []Header{
@@ -625,7 +637,7 @@ v1     |v2|
 			}
 
 			newTable := table.AddColumn("Header3", []Value{ValueString{S: "r1c3"}, ValueString{S: "r2c3"}})
-			Expect(newTable).To(Equal(Table{
+			assert.Equal(t, newTable, Table{
 				Content: "content",
 				Header: []Header{
 					NewHeader("Header1"),
@@ -638,7 +650,7 @@ v1     |v2|
 				},
 				BackgroundStr: ".",
 				BorderStr:     "|",
-			}))
+			})
 		})
 	})
-})
+}

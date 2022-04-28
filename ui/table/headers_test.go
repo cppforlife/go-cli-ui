@@ -1,51 +1,42 @@
 package table_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	"github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("Headers", func() {
-
-	Describe("KeyifyHeader", func() {
-		It("should convert alphanumeric to lowercase ", func() {
-			keyifyHeader := table.KeyifyHeader("Header1")
-			Expect(keyifyHeader).To(Equal("header1"))
-		})
-
-		Context("given a header that only contains non-alphanumeric and alphanumeric", func() {
-			It("should non-alphanumeric to underscore", func() {
-				keyifyHeader := table.KeyifyHeader("FOO!@AND#$BAR")
-				Expect(keyifyHeader).To(Equal("foo_and_bar"))
-			})
-		})
-
-		Context("given a header that only contains non-alphanumeric", func() {
-			It("should convert to underscore", func() {
-				keyifyHeader := table.KeyifyHeader("!@#$")
-				Expect(keyifyHeader).To(Equal("_"))
-			})
-
-			It("should convert empty header to underscore", func() {
-				keyifyHeader := table.KeyifyHeader("")
-				Expect(keyifyHeader).To(Equal("_"))
-			})
-		})
-
+func TestKeyifyHeader(t *testing.T) {
+	t.Run("should convert alphanumeric to lowercase ", func(t *testing.T) {
+		keyifyHeader := table.KeyifyHeader("Header1")
+		assert.Equal(t, keyifyHeader, "header1")
 	})
 
-	Describe("SetColumnVisibility", func() {
-		Context("when given a header that does not exist", func() {
-			It("should return an error", func() {
-				t := table.Table{
-					Header: []table.Header{table.NewHeader("header1")},
-				}
+	t.Run("given a header that only contains non-alphanumeric and alphanumeric should non-alphanumeric to underscore", func(t *testing.T) {
+		keyifyHeader := table.KeyifyHeader("FOO!@AND#$BAR")
+		assert.Equal(t, keyifyHeader, "foo_and_bar")
+	})
 
-				err := t.SetColumnVisibility([]table.Header{table.NewHeader("non-matching-header")})
-				Expect(err).To(HaveOccurred())
-			})
+	t.Run("given a header that only contains non-alphanumeric", func(t *testing.T) {
+		t.Run("should convert to underscore", func(t *testing.T) {
+			keyifyHeader := table.KeyifyHeader("!@#$")
+			assert.Equal(t, keyifyHeader, "_")
+		})
+
+		t.Run("should convert empty header to underscore", func(t *testing.T) {
+			keyifyHeader := table.KeyifyHeader("")
+			assert.Equal(t, keyifyHeader, "_")
 		})
 	})
-})
+}
+
+func TestSetColumnVisibility(t *testing.T) {
+	t.Run("when given a header that does not exist should return an error", func(t *testing.T) {
+		tbl := table.Table{
+			Header: []table.Header{table.NewHeader("header1")},
+		}
+		err := tbl.SetColumnVisibility([]table.Header{table.NewHeader("non-matching-header")})
+		assert.Error(t, err)
+	})
+}

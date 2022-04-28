@@ -1,14 +1,14 @@
 package test_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	"github.com/cppforlife/go-cli-ui/ui"
 	. "github.com/cppforlife/go-cli-ui/ui/test"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("JSONUIFromBytes", func() {
+func TestJSONUIFromBytes(t *testing.T) {
 	const (
 		example = `
 {
@@ -44,9 +44,9 @@ var _ = Describe("JSONUIFromBytes", func() {
 `
 	)
 
-	It("properly parses JSON UI output", func() {
-		resp := JSONUIFromBytes(nil, []byte(example))
-		Expect(resp).To(Equal(ui.JSONUIResp{
+	t.Run("properly parses JSON UI output", func(t *testing.T) {
+		resp := JSONUIFromBytes(t, []byte(example))
+		assert.Equal(t, resp, ui.JSONUIResp{
 			Tables: []ui.JSONUITableResp{
 				{
 					Content: "services",
@@ -75,6 +75,6 @@ var _ = Describe("JSONUIFromBytes", func() {
 			},
 			Blocks: nil,
 			Lines:  nil,
-		}))
+		})
 	})
-})
+}

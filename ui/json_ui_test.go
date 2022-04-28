@@ -2,27 +2,15 @@ package ui_test
 
 import (
 	"encoding/json"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	. "github.com/cppforlife/go-cli-ui/ui"
 	fakeui "github.com/cppforlife/go-cli-ui/ui/fakes"
 	. "github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("JSONUI", func() {
-	var (
-		parentUI *fakeui.FakeUI
-		ui       UI
-	)
-
-	BeforeEach(func() {
-		parentUI = &fakeui.FakeUI{}
-		logger := NewRecordingLogger()
-		ui = NewJSONUI(parentUI, logger)
-	})
-
+func TestJSONUI(t *testing.T) {
 	type tableResp struct {
 		Content string
 		Header  map[string]string
@@ -36,7 +24,7 @@ var _ = Describe("JSONUI", func() {
 		Lines  []string
 	}
 
-	finalOutput := func() uiResp {
+	finalOutput := func(ui UI, parentUI *fakeui.FakeUI) uiResp {
 		ui.Flush()
 
 		var val uiResp
@@ -49,68 +37,89 @@ var _ = Describe("JSONUI", func() {
 		return val
 	}
 
-	Describe("ErrorLinef", func() {
-		It("includes in Lines", func() {
+	t.Run("ErrorLinef", func(t *testing.T) {
+		t.Run("includes in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.ErrorLinef("fake-line1")
 			ui.ErrorLinef("fake-line2")
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Lines: []string{"fake-line1", "fake-line2"},
-			}))
+			})
 		})
 	})
 
-	Describe("PrintLinef", func() {
-		It("includes in Lines", func() {
+	t.Run("PrintLinef", func(t *testing.T) {
+		t.Run("includes in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.PrintLinef("fake-line1")
 			ui.PrintLinef("fake-line2")
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Lines: []string{"fake-line1", "fake-line2"},
-			}))
+			})
 		})
 	})
 
-	Describe("BeginLinef", func() {
-		It("includes in Lines", func() {
+	t.Run("BeginLinef", func(t *testing.T) {
+		t.Run("includes in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.BeginLinef("fake-line1")
 			ui.BeginLinef("fake-line2")
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Lines: []string{"fake-line1", "fake-line2"},
-			}))
+			})
 		})
 	})
 
-	Describe("EndLinef", func() {
-		It("includes in Lines", func() {
+	t.Run("EndLinef", func(t *testing.T) {
+		t.Run("includes in Lines", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.EndLinef("fake-line1")
 			ui.EndLinef("fake-line2")
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Lines: []string{"fake-line1", "fake-line2"},
-			}))
+			})
 		})
 	})
 
-	Describe("PrintBlock", func() {
-		It("includes in Blocks", func() {
+	t.Run("PrintBlock", func(t *testing.T) {
+		t.Run("includes in Blocks", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.PrintBlock([]byte("fake-block1"))
 			ui.PrintBlock([]byte("fake-block2"))
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Blocks: []string{"fake-block1", "fake-block2"},
-			}))
+			})
 		})
 	})
 
-	Describe("PrintErrorBlock", func() {
-		It("includes in Blocks", func() {
+	t.Run("PrintErrorBlock", func(t *testing.T) {
+		t.Run("includes in Blocks", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.PrintErrorBlock("fake-block1")
 			ui.PrintErrorBlock("fake-block2")
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Blocks: []string{"fake-block1", "fake-block2"},
-			}))
+			})
 		})
 	})
 
-	Describe("PrintTable", func() {
-		It("includes table response in Tables", func() {
+	t.Run("PrintTable", func(t *testing.T) {
+		t.Run("includes table response in Tables", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			table := Table{
 				Content: "things",
 				Header:  []Header{NewHeader("Header & ( foo )  1 "), NewHeader("Header-2 header 3")},
@@ -130,7 +139,7 @@ var _ = Describe("JSONUI", func() {
 			ui.PrintTable(table)
 			ui.PrintTable(table2)
 
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Tables: []tableResp{
 					{
 						Content: "things",
@@ -147,10 +156,13 @@ var _ = Describe("JSONUI", func() {
 						Rows:    []map[string]string{},
 					},
 				},
-			}))
+			})
 		})
 
-		It("generates header keys for tables with row content and no header content", func() {
+		t.Run("generates header keys for tables with row content and no header content", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			table := Table{
 				Content: "things",
 				Header:  []Header{},
@@ -165,7 +177,7 @@ var _ = Describe("JSONUI", func() {
 
 			ui.PrintTable(table)
 
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Tables: []tableResp{
 					{
 						Content: "things",
@@ -177,10 +189,13 @@ var _ = Describe("JSONUI", func() {
 						Notes: []string{"note1", "note2"},
 					},
 				},
-			}))
+			})
 		})
 
-		It("includes Headers in Tables", func() {
+		t.Run("includes Headers in Tables", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			table := Table{
 				Content: "things",
 				Header: []Header{
@@ -203,7 +218,7 @@ var _ = Describe("JSONUI", func() {
 			ui.PrintTable(table)
 			ui.PrintTable(table2)
 
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Tables: []tableResp{
 					{
 						Content: "things",
@@ -218,10 +233,13 @@ var _ = Describe("JSONUI", func() {
 						Rows:    []map[string]string{},
 					},
 				},
-			}))
+			})
 		})
 
-		It("convert non-alphanumeric to _", func() {
+		t.Run("convert non-alphanumeric to _", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			table := Table{
 				Content: "things",
 				Header: []Header{
@@ -240,24 +258,20 @@ var _ = Describe("JSONUI", func() {
 
 			ui.PrintTable(table)
 
-			tableOutput := finalOutput()
-			Expect(tableOutput.Tables).To(HaveLen(1))
-			Expect(tableOutput.Tables[0].Content).To(Equal("things"))
-			Expect(tableOutput.Tables[0].Header).To(HaveKeyWithValue("0", "#"))
-			Expect(tableOutput.Tables[0].Header).To(HaveKeyWithValue("foo", "foo"))
-			Expect(tableOutput.Tables[0].Header).To(HaveKeyWithValue("2", "$"))
+			tableOutput := finalOutput(ui, parentUI)
+			assert.Equal(t, len(tableOutput.Tables), 1)
+			assert.Equal(t, tableOutput.Tables[0].Content, "things")
+			assert.Equal(t, tableOutput.Tables[0].Header, map[string]string{"0": "#", "2": "$", "foo": "foo"})
 
-			Expect(tableOutput.Tables[0].Rows).To(HaveLen(2))
-			Expect(tableOutput.Tables[0].Rows[0]).To(HaveKeyWithValue("0", "r1c1"))
-			Expect(tableOutput.Tables[0].Rows[0]).To(HaveKeyWithValue("foo", "r1c2"))
-			Expect(tableOutput.Tables[0].Rows[0]).To(HaveKeyWithValue("2", "r1c3"))
-
-			Expect(tableOutput.Tables[0].Rows[1]).To(HaveKeyWithValue("0", "r2c1"))
-			Expect(tableOutput.Tables[0].Rows[1]).To(HaveKeyWithValue("foo", "r2c2"))
-			Expect(tableOutput.Tables[0].Rows[1]).To(HaveKeyWithValue("2", "r2c3"))
+			assert.Equal(t, len(tableOutput.Tables[0].Rows), 2)
+			assert.Equal(t, tableOutput.Tables[0].Rows[0], map[string]string{"0": "r1c1", "foo": "r1c2", "2": "r1c3"})
+			assert.Equal(t, tableOutput.Tables[0].Rows[1], map[string]string{"0": "r2c1", "foo": "r2c2", "2": "r2c3"})
 		})
 
-		It("includes in Tables when table has sections and fills in first column", func() {
+		t.Run("includes in Tables when table has sections and fills in first column", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			table := Table{
 				Content: "things",
 				Header:  []Header{NewHeader("Header1"), NewHeader("Header2")},
@@ -277,7 +291,7 @@ var _ = Describe("JSONUI", func() {
 
 			ui.PrintTable(table)
 
-			Expect(finalOutput()).To(Equal(uiResp{
+			assert.Equal(t, finalOutput(ui, parentUI), uiResp{
 				Tables: []tableResp{
 					{
 						Content: "things",
@@ -287,60 +301,81 @@ var _ = Describe("JSONUI", func() {
 						Notes: []string{"note1", "note2"},
 					},
 				},
-			}))
+			})
 		})
 	})
 
-	Describe("AskForText", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForText("") }).To(Panic())
+	t.Run("AskForText", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
+			assert.Panics(t, func() { ui.AskForText("") })
 		})
 	})
 
-	Describe("AskForPassword", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForPassword("") }).To(Panic())
+	t.Run("AskForPassword", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
+			assert.Panics(t, func() { ui.AskForPassword("") })
 		})
 	})
 
-	Describe("AskForChoice", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForChoice("", nil) }).To(Panic())
+	t.Run("AskForChoice", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
+			assert.Panics(t, func() { ui.AskForChoice("", nil) })
 		})
 	})
 
-	Describe("AskForConfirmation", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForConfirmation() }).To(Panic())
+	t.Run("AskForConfirmation", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
+			assert.Panics(t, func() { ui.AskForConfirmation() })
 		})
 	})
 
-	Describe("IsInteractive", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("IsInteractive", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			parentUI.Interactive = true
-			Expect(ui.IsInteractive()).To(BeTrue())
+			assert.Equal(t, ui.IsInteractive(), true)
 
 			parentUI.Interactive = false
-			Expect(ui.IsInteractive()).To(BeFalse())
+			assert.Equal(t, ui.IsInteractive(), false)
 		})
 	})
 
-	Describe("Flush", func() {
-		It("does not output anything when nothing was recorded", func() {
+	t.Run("Flush", func(t *testing.T) {
+		t.Run("does not output anything when nothing was recorded", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.Flush()
-			Expect(parentUI.Said).To(BeEmpty())
+			assert.Equal(t, len(parentUI.Said), 0)
 		})
 
-		It("outputs everything when something was recorded", func() {
+		t.Run("outputs everything when something was recorded", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewJSONUI(parentUI, NewRecordingLogger())
+
 			ui.PrintLinef("fake-line1")
 			ui.Flush()
-			Expect(parentUI.Blocks[0]).To(Equal(`{
+			assert.Equal(t, parentUI.Blocks[0], `{
     "Tables": null,
     "Blocks": null,
     "Lines": [
         "fake-line1"
     ]
-}`))
+}`)
 		})
 	})
-})
+}

@@ -1,69 +1,80 @@
 package ui_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	. "github.com/cppforlife/go-cli-ui/ui"
 	fakeui "github.com/cppforlife/go-cli-ui/ui/fakes"
 	. "github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("NonInteractiveUI", func() {
-	var (
-		parentUI *fakeui.FakeUI
-		ui       UI
-	)
+func TestNonInteractiveUI(t *testing.T) {
+	t.Run("ErrorLinef", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
 
-	BeforeEach(func() {
-		parentUI = &fakeui.FakeUI{}
-		ui = NewNonInteractiveUI(parentUI)
-	})
-
-	Describe("ErrorLinef", func() {
-		It("delegates to the parent UI", func() {
 			ui.ErrorLinef("fake-error-line")
-			Expect(parentUI.Errors).To(Equal([]string{"fake-error-line"}))
+			assert.Equal(t, parentUI.Errors, []string{"fake-error-line"})
 		})
 	})
 
-	Describe("PrintLinef", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("PrintLinef", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			ui.PrintLinef("fake-line")
-			Expect(parentUI.Said).To(Equal([]string{"fake-line"}))
+			assert.Equal(t, parentUI.Said, []string{"fake-line"})
 		})
 	})
 
-	Describe("BeginLinef", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("BeginLinef", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			ui.BeginLinef("fake-start")
-			Expect(parentUI.Said).To(Equal([]string{"fake-start"}))
+			assert.Equal(t, parentUI.Said, []string{"fake-start"})
 		})
 	})
 
-	Describe("EndLinef", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("EndLinef", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			ui.EndLinef("fake-end")
-			Expect(parentUI.Said).To(Equal([]string{"fake-end"}))
+			assert.Equal(t, parentUI.Said, []string{"fake-end"})
 		})
 	})
 
-	Describe("PrintBlock", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("PrintBlock", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			ui.PrintBlock([]byte("block"))
-			Expect(parentUI.Blocks).To(Equal([]string{"block"}))
+			assert.Equal(t, parentUI.Blocks, []string{"block"})
 		})
 	})
 
-	Describe("PrintErrorBlock", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("PrintErrorBlock", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			ui.PrintErrorBlock("block")
-			Expect(parentUI.Blocks).To(Equal([]string{"block"}))
+			assert.Equal(t, parentUI.Blocks, []string{"block"})
 		})
 	})
 
-	Describe("PrintTable", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("PrintTable", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			table := Table{
 				Content: "things",
 				Header:  []Header{NewHeader("header1")},
@@ -71,44 +82,62 @@ var _ = Describe("NonInteractiveUI", func() {
 
 			ui.PrintTable(table)
 
-			Expect(parentUI.Table).To(Equal(table))
+			assert.Equal(t, parentUI.Table, table)
 		})
 	})
 
-	Describe("AskForText", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForText("") }).To(Panic())
+	t.Run("AskForText", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			assert.Panics(t, func() { ui.AskForText("") })
 		})
 	})
 
-	Describe("AskForPassword", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForPassword("") }).To(Panic())
+	t.Run("AskForPassword", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			assert.Panics(t, func() { ui.AskForPassword("") })
 		})
 	})
 
-	Describe("AskForChoice", func() {
-		It("panics", func() {
-			Expect(func() { ui.AskForChoice("", nil) }).To(Panic())
+	t.Run("AskForChoice", func(t *testing.T) {
+		t.Run("panics", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			assert.Panics(t, func() { ui.AskForChoice("", nil) })
 		})
 	})
 
-	Describe("AskForConfirmation", func() {
-		It("responds affirmatively with no error", func() {
-			Expect(ui.AskForConfirmation()).To(BeNil())
+	t.Run("AskForConfirmation", func(t *testing.T) {
+		t.Run("responds affirmatively with no error", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			assert.Equal(t, ui.AskForConfirmation(), nil)
 		})
 	})
 
-	Describe("IsInteractive", func() {
-		It("returns false", func() {
-			Expect(ui.IsInteractive()).To(BeFalse())
+	t.Run("IsInteractive", func(t *testing.T) {
+		t.Run("returns false", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			assert.Equal(t, ui.IsInteractive(), false)
 		})
 	})
 
-	Describe("Flush", func() {
-		It("delegates to the parent UI", func() {
+	t.Run("Flush", func(t *testing.T) {
+		t.Run("delegates to the parent UI", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
 			ui.Flush()
-			Expect(parentUI.Flushed).To(BeTrue())
+			assert.Equal(t, parentUI.Flushed, true)
 		})
 	})
-})
+}

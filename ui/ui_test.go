@@ -3,175 +3,186 @@ package ui_test
 import (
 	"bytes"
 	"io"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	. "github.com/cppforlife/go-cli-ui/ui"
 	. "github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("UI", func() {
-	var (
-		logger                   *RecordingLogger
-		uiOutBuffer, uiErrBuffer *bytes.Buffer
-		uiOut, uiErr             io.Writer
-		ui                       UI
-	)
+func TestUI(t *testing.T) {
+	t.Run("ErrorLinef", func(t *testing.T) {
+		t.Run("prints to errWriter with a trailing newline", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
 
-	BeforeEach(func() {
-		uiOutBuffer = bytes.NewBufferString("")
-		uiOut = uiOutBuffer
-		uiErrBuffer = bytes.NewBufferString("")
-		uiErr = uiErrBuffer
-	})
-
-	JustBeforeEach(func() {
-		logger = NewRecordingLogger()
-		ui = NewWriterUI(uiOut, uiErr, logger)
-	})
-
-	Describe("ErrorLinef", func() {
-		It("prints to errWriter with a trailing newline", func() {
 			ui.ErrorLinef("fake-error-line")
-			Expect(uiOutBuffer.String()).To(Equal(""))
-			Expect(uiErrBuffer.String()).To(ContainSubstring("fake-error-line\n"))
+			assert.Equal(t, uiOutBuffer.String(), "")
+			assert.Contains(t, uiErrBuffer.String(), "fake-error-line\n")
 		})
 
-		Context("when writing fails", func() {
-			BeforeEach(func() {
+		t.Run("when writing fails", func(t *testing.T) {
+			t.Run("logs an error", func(t *testing.T) {
 				reader, writer := io.Pipe()
-				uiErr = writer
 				reader.Close()
-			})
 
-			It("logs an error", func() {
+				uiOutBuffer := bytes.NewBufferString("")
+				logger := NewRecordingLogger()
+				ui := NewWriterUI(uiOutBuffer, writer, logger)
+
 				ui.ErrorLinef("fake-error-line")
 
-				Expect(uiOutBuffer.String()).To(Equal(""))
-				Expect(uiErrBuffer.String()).To(Equal(""))
-				Expect(logger.ErrOut.String()).To(ContainSubstring("UI.ErrorLinef failed (message='fake-error-line')"))
+				assert.Equal(t, uiOutBuffer.String(), "")
+				assert.Contains(t, logger.ErrOut.String(), "UI.ErrorLinef failed (message='fake-error-line')")
 			})
 		})
 	})
 
-	Describe("PrintLinef", func() {
-		It("prints to outWriter with a trailing newline", func() {
+	t.Run("PrintLinef", func(t *testing.T) {
+		t.Run("prints to outWriter with a trailing newline", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
 			ui.PrintLinef("fake-line")
-			Expect(uiOutBuffer.String()).To(ContainSubstring("fake-line\n"))
+			assert.Contains(t, uiOutBuffer.String(), "fake-line\n")
+			assert.Equal(t, uiErrBuffer.String(), "")
 		})
 
-		Context("when writing fails", func() {
-			BeforeEach(func() {
+		t.Run("when writing fails", func(t *testing.T) {
+			t.Run("logs an error", func(t *testing.T) {
 				reader, writer := io.Pipe()
-				uiOut = writer
 				reader.Close()
-			})
 
-			It("logs an error", func() {
+				uiErrBuffer := bytes.NewBufferString("")
+				logger := NewRecordingLogger()
+				ui := NewWriterUI(writer, uiErrBuffer, logger)
+
 				ui.PrintLinef("fake-start")
 
-				Expect(uiOutBuffer.String()).To(Equal(""))
-				Expect(uiErrBuffer.String()).To(Equal(""))
-				Expect(logger.ErrOut.String()).To(ContainSubstring("UI.PrintLinef failed (message='fake-start')"))
+				assert.Equal(t, uiErrBuffer.String(), "")
+				assert.Contains(t, logger.ErrOut.String(), "UI.PrintLinef failed (message='fake-start')")
 			})
 		})
 	})
 
-	Describe("BeginLinef", func() {
-		It("prints to outWriter", func() {
+	t.Run("BeginLinef", func(t *testing.T) {
+		t.Run("prints to outWriter", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
 			ui.BeginLinef("fake-start")
-			Expect(uiOutBuffer.String()).To(ContainSubstring("fake-start"))
+			assert.Contains(t, uiOutBuffer.String(), "fake-start")
+			assert.Equal(t, uiErrBuffer.String(), "")
 		})
 
-		Context("when writing fails", func() {
-			BeforeEach(func() {
+		t.Run("when writing fails", func(t *testing.T) {
+			t.Run("logs an error", func(t *testing.T) {
 				reader, writer := io.Pipe()
-				uiOut = writer
 				reader.Close()
-			})
 
-			It("logs an error", func() {
+				uiErrBuffer := bytes.NewBufferString("")
+				logger := NewRecordingLogger()
+				ui := NewWriterUI(writer, uiErrBuffer, logger)
+
 				ui.BeginLinef("fake-start")
 
-				Expect(uiOutBuffer.String()).To(Equal(""))
-				Expect(uiErrBuffer.String()).To(Equal(""))
-				Expect(logger.ErrOut.String()).To(ContainSubstring("UI.BeginLinef failed (message='fake-start')"))
+				assert.Equal(t, uiErrBuffer.String(), "")
+				assert.Contains(t, logger.ErrOut.String(), "UI.BeginLinef failed (message='fake-start')")
 			})
 		})
 	})
 
-	Describe("EndLinef", func() {
-		It("prints to outWriter with a trailing newline", func() {
+	t.Run("EndLinef", func(t *testing.T) {
+		t.Run("prints to outWriter with a trailing newline", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
 			ui.EndLinef("fake-end")
-			Expect(uiOutBuffer.String()).To(ContainSubstring("fake-end\n"))
+			assert.Contains(t, uiOutBuffer.String(), "fake-end\n")
+			assert.Equal(t, uiErrBuffer.String(), "")
 		})
 
-		Context("when writing fails", func() {
-			BeforeEach(func() {
+		t.Run("when writing fails", func(t *testing.T) {
+			t.Run("logs an error", func(t *testing.T) {
 				reader, writer := io.Pipe()
-				uiOut = writer
 				reader.Close()
-			})
 
-			It("logs an error", func() {
+				uiErrBuffer := bytes.NewBufferString("")
+				logger := NewRecordingLogger()
+				ui := NewWriterUI(writer, uiErrBuffer, logger)
+
 				ui.EndLinef("fake-start")
 
-				Expect(uiOutBuffer.String()).To(Equal(""))
-				Expect(uiErrBuffer.String()).To(Equal(""))
-				Expect(logger.ErrOut.String()).To(ContainSubstring("UI.EndLinef failed (message='fake-start')"))
+				assert.Equal(t, uiErrBuffer.String(), "")
+				assert.Contains(t, logger.ErrOut.String(), "UI.EndLinef failed (message='fake-start')")
 			})
 		})
 	})
 
-	Describe("PrintBlock", func() {
-		It("prints to outWriter as is", func() {
+	t.Run("PrintBlock", func(t *testing.T) {
+		t.Run("prints to outWriter as is", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
 			ui.PrintBlock([]byte("block"))
-			Expect(uiOutBuffer.String()).To(Equal("block"))
-			Expect(uiErrBuffer.String()).To(Equal(""))
+			assert.Equal(t, uiOutBuffer.String(), "block")
+			assert.Equal(t, uiErrBuffer.String(), "")
 		})
 
-		Context("when writing fails", func() {
-			BeforeEach(func() {
+		t.Run("when writing fails", func(t *testing.T) {
+			t.Run("logs an error", func(t *testing.T) {
 				reader, writer := io.Pipe()
-				uiOut = writer
 				reader.Close()
-			})
 
-			It("logs an error", func() {
+				uiErrBuffer := bytes.NewBufferString("")
+				logger := NewRecordingLogger()
+				ui := NewWriterUI(writer, uiErrBuffer, logger)
+
 				ui.PrintBlock([]byte("block"))
-				Expect(uiOutBuffer.String()).To(Equal(""))
-				Expect(uiErrBuffer.String()).To(Equal(""))
-				Expect(logger.ErrOut.String()).To(ContainSubstring("UI.PrintBlock failed (message='block')"))
+				assert.Equal(t, uiErrBuffer.String(), "")
+				assert.Contains(t, logger.ErrOut.String(), "UI.PrintBlock failed (message='block')")
 			})
 		})
 	})
 
-	Describe("PrintErrorBlock", func() {
-		It("prints to outWriter as is", func() {
+	t.Run("PrintErrorBlock", func(t *testing.T) {
+		t.Run("prints to outWriter as is", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
 			ui.PrintErrorBlock("block")
-			Expect(uiOutBuffer.String()).To(Equal("block"))
-			Expect(uiErrBuffer.String()).To(Equal(""))
+			assert.Equal(t, uiOutBuffer.String(), "block")
+			assert.Equal(t, uiErrBuffer.String(), "")
 		})
 
-		Context("when writing fails", func() {
-			BeforeEach(func() {
+		t.Run("when writing fails", func(t *testing.T) {
+			t.Run("logs an error", func(t *testing.T) {
 				reader, writer := io.Pipe()
-				uiOut = writer
 				reader.Close()
-			})
 
-			It("logs an error", func() {
+				uiErrBuffer := bytes.NewBufferString("")
+				logger := NewRecordingLogger()
+				ui := NewWriterUI(writer, uiErrBuffer, logger)
+
 				ui.PrintErrorBlock("block")
-				Expect(uiOutBuffer.String()).To(Equal(""))
-				Expect(uiErrBuffer.String()).To(Equal(""))
-				Expect(logger.ErrOut.String()).To(ContainSubstring("UI.PrintErrorBlock failed (message='block')"))
+				assert.Equal(t, uiErrBuffer.String(), "")
+				assert.Contains(t, logger.ErrOut.String(), "UI.PrintErrorBlock failed (message='block')")
 			})
 		})
 	})
 
-	Describe("PrintTable", func() {
-		It("prints table", func() {
+	t.Run("PrintTable", func(t *testing.T) {
+		t.Run("prints table", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
 			table := Table{
 				Title:   "Title",
 				Content: "things",
@@ -187,7 +198,7 @@ var _ = Describe("UI", func() {
 				BorderStr:     "|",
 			}
 			ui.PrintTable(table)
-			Expect("\n" + uiOutBuffer.String()).To(Equal(`
+			assert.Equal(t, "\n"+uiOutBuffer.String(), `
 Title
 
 Header1|Header2|
@@ -198,19 +209,27 @@ note1
 note2
 
 2 things
-`))
+`)
 		})
 	})
 
-	Describe("IsInteractive", func() {
-		It("returns true", func() {
-			Expect(ui.IsInteractive()).To(BeTrue())
+	t.Run("IsInteractive", func(t *testing.T) {
+		t.Run("returns true", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
+			assert.Equal(t, ui.IsInteractive(), true)
 		})
 	})
 
-	Describe("Flush", func() {
-		It("does nothing", func() {
-			Expect(func() { ui.Flush() }).ToNot(Panic())
+	t.Run("Flush", func(t *testing.T) {
+		t.Run("does nothing", func(t *testing.T) {
+			uiOutBuffer := bytes.NewBufferString("")
+			uiErrBuffer := bytes.NewBufferString("")
+			ui := NewWriterUI(uiOutBuffer, uiErrBuffer, NewRecordingLogger())
+
+			assert.NotPanics(t, func() { ui.Flush() })
 		})
 	})
-})
+}

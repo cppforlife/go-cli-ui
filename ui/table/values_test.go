@@ -4,164 +4,163 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"testing"
 	"time"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-
 	. "github.com/cppforlife/go-cli-ui/ui/table"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("ValueString", func() {
-	It("returns string", func() {
-		Expect(ValueString{S: "val"}.String()).To(Equal("val"))
+func TestValueString(t *testing.T) {
+	t.Run("returns string", func(t *testing.T) {
+		assert.Equal(t, ValueString{S: "val"}.String(), "val")
 	})
 
-	It("returns itself", func() {
-		Expect(ValueString{S: "val"}.Value()).To(Equal(ValueString{S: "val"}))
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueString{S: "val"}.Value(), ValueString{S: "val"})
 	})
 
-	It("returns int based on string compare", func() {
-		Expect(ValueString{S: "a"}.Compare(ValueString{S: "a"})).To(Equal(0))
-		Expect(ValueString{S: "a"}.Compare(ValueString{S: "b"})).To(Equal(-1))
-		Expect(ValueString{S: "b"}.Compare(ValueString{S: "a"})).To(Equal(1))
+	t.Run("returns int based on string compare", func(t *testing.T) {
+		assert.Equal(t, ValueString{S: "a"}.Compare(ValueString{S: "a"}), 0)
+		assert.Equal(t, ValueString{S: "a"}.Compare(ValueString{S: "b"}), -1)
+		assert.Equal(t, ValueString{S: "b"}.Compare(ValueString{S: "a"}), 1)
 	})
-})
+}
 
-var _ = Describe("ValueStrings", func() {
-	It("returns new line joined strings", func() {
-		Expect(ValueStrings{S: []string{"val1", "val2"}}.String()).To(Equal("val1\nval2"))
-	})
-
-	It("returns itself", func() {
-		Expect(ValueStrings{S: []string{"val1"}}.Value()).To(Equal(ValueStrings{S: []string{"val1"}}))
+func TestValueStrings(t *testing.T) {
+	t.Run("returns new line joined strings", func(t *testing.T) {
+		assert.Equal(t, ValueStrings{S: []string{"val1", "val2"}}.String(), "val1\nval2")
 	})
 
-	It("returns int based on string compare", func() {
-		Expect(ValueStrings{S: []string{"val1"}}.Compare(ValueStrings{S: []string{"val1"}})).To(Equal(0))
-		Expect(ValueStrings{S: []string{"val1"}}.Compare(ValueStrings{S: []string{"val1", "val2"}})).To(Equal(-1))
-		Expect(ValueStrings{S: []string{"val1", "val2"}}.Compare(ValueStrings{S: []string{"val1"}})).To(Equal(1))
-	})
-})
-
-var _ = Describe("ValueInt", func() {
-	It("returns string", func() {
-		Expect(ValueInt{I: 1}.String()).To(Equal("1"))
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueStrings{S: []string{"val1"}}.Value(), ValueStrings{S: []string{"val1"}})
 	})
 
-	It("returns itself", func() {
-		Expect(ValueInt{I: 1}.Value()).To(Equal(ValueInt{I: 1}))
+	t.Run("returns int based on string compare", func(t *testing.T) {
+		assert.Equal(t, ValueStrings{S: []string{"val1"}}.Compare(ValueStrings{S: []string{"val1"}}), 0)
+		assert.Equal(t, ValueStrings{S: []string{"val1"}}.Compare(ValueStrings{S: []string{"val1", "val2"}}), -1)
+		assert.Equal(t, ValueStrings{S: []string{"val1", "val2"}}.Compare(ValueStrings{S: []string{"val1"}}), 1)
+	})
+}
+
+func TestValueInt(t *testing.T) {
+	t.Run("returns string", func(t *testing.T) {
+		assert.Equal(t, ValueInt{I: 1}.String(), "1")
 	})
 
-	It("returns int based on int compare", func() {
-		Expect(ValueInt{I: 1}.Compare(ValueInt{I: 1})).To(Equal(0))
-		Expect(ValueInt{I: 1}.Compare(ValueInt{I: 2})).To(Equal(-1))
-		Expect(ValueInt{I: 2}.Compare(ValueInt{I: 1})).To(Equal(1))
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueInt{I: 1}.Value(), ValueInt{I: 1})
 	})
-})
 
-var _ = Describe("ValueTime", func() {
+	t.Run("returns int based on int compare", func(t *testing.T) {
+		assert.Equal(t, ValueInt{I: 1}.Compare(ValueInt{I: 1}), 0)
+		assert.Equal(t, ValueInt{I: 1}.Compare(ValueInt{I: 2}), -1)
+		assert.Equal(t, ValueInt{I: 2}.Compare(ValueInt{I: 1}), 1)
+	})
+}
+
+func TestValueTime(t *testing.T) {
 	t1 := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
 	t2 := time.Date(2009, time.November, 10, 23, 0, 0, 1, time.UTC)
 	empty := time.Time{}
 
-	It("returns formatted full time", func() {
-		Expect(ValueTime{T: t1}.String()).To(Equal("2009-11-10T23:00:00Z"))
+	t.Run("returns formatted full time", func(t *testing.T) {
+		assert.Equal(t, ValueTime{T: t1}.String(), "2009-11-10T23:00:00Z")
 	})
 
-	It("returns empty", func() {
-		Expect(ValueTime{T: empty}.String()).To(Equal(""))
+	t.Run("returns empty", func(t *testing.T) {
+		assert.Equal(t, ValueTime{T: empty}.String(), "")
 	})
 
-	It("returns itself", func() {
-		Expect(ValueTime{T: t1}.Value()).To(Equal(ValueTime{T: t1}))
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueTime{T: t1}.Value(), ValueTime{T: t1})
 	})
 
-	It("returns int based on time compare", func() {
-		Expect(ValueTime{T: t1}.Compare(ValueTime{T: t1})).To(Equal(0))
-		Expect(ValueTime{T: t1}.Compare(ValueTime{T: t2})).To(Equal(-1))
-		Expect(ValueTime{T: t2}.Compare(ValueTime{T: t1})).To(Equal(1))
+	t.Run("returns int based on time compare", func(t *testing.T) {
+		assert.Equal(t, ValueTime{T: t1}.Compare(ValueTime{T: t1}), 0)
+		assert.Equal(t, ValueTime{T: t1}.Compare(ValueTime{T: t2}), -1)
+		assert.Equal(t, ValueTime{T: t2}.Compare(ValueTime{T: t1}), 1)
 	})
-})
+}
 
-var _ = Describe("ValueBool", func() {
-	It("returns true/false as string", func() {
-		Expect(ValueBool{B: true}.String()).To(Equal("true"))
-		Expect(ValueBool{B: false}.String()).To(Equal("false"))
-	})
-
-	It("returns itself", func() {
-		Expect(ValueBool{B: true}.Value()).To(Equal(ValueBool{B: true}))
+func TestValueBool(t *testing.T) {
+	t.Run("returns true/false as string", func(t *testing.T) {
+		assert.Equal(t, ValueBool{B: true}.String(), "true")
+		assert.Equal(t, ValueBool{B: false}.String(), "false")
 	})
 
-	It("returns int based on bool compare", func() {
-		Expect(ValueBool{B: true}.Compare(ValueBool{B: true})).To(Equal(0))
-		Expect(ValueBool{B: false}.Compare(ValueBool{B: true})).To(Equal(-1))
-		Expect(ValueBool{B: true}.Compare(ValueBool{B: false})).To(Equal(1))
-	})
-})
-
-var _ = Describe("ValueError", func() {
-	It("returns empty string or error description", func() {
-		Expect(ValueError{}.String()).To(Equal(""))
-		Expect(ValueError{E: errors.New("err")}.String()).To(Equal("err"))
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueBool{B: true}.Value(), ValueBool{B: true})
 	})
 
-	It("returns itself", func() {
-		Expect(ValueError{E: errors.New("err")}.Value()).To(Equal(ValueError{E: errors.New("err")}))
+	t.Run("returns int based on bool compare", func(t *testing.T) {
+		assert.Equal(t, ValueBool{B: true}.Compare(ValueBool{B: true}), 0)
+		assert.Equal(t, ValueBool{B: false}.Compare(ValueBool{B: true}), -1)
+		assert.Equal(t, ValueBool{B: true}.Compare(ValueBool{B: false}), 1)
+	})
+}
+
+func TestValueError(t *testing.T) {
+	t.Run("returns empty string or error description", func(t *testing.T) {
+		assert.Equal(t, ValueError{}.String(), "")
+		assert.Equal(t, ValueError{E: errors.New("err")}.String(), "err")
 	})
 
-	It("does not allow comparison", func() {
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueError{E: errors.New("err")}.Value(), ValueError{E: errors.New("err")})
+	})
+
+	t.Run("does not allow comparison", func(t *testing.T) {
 		f := func() { ValueError{}.Compare(ValueError{}) }
-		Expect(f).To(Panic())
+		assert.Panics(t, f)
 	})
-})
+}
 
-var _ = Describe("ValueNone", func() {
-	It("returns empty string", func() {
-		Expect(ValueNone{}.String()).To(Equal(""))
-	})
-
-	It("returns itself", func() {
-		Expect(ValueNone{}.Value()).To(Equal(ValueNone{}))
+func TestValueNone(t *testing.T) {
+	t.Run("returns empty string", func(t *testing.T) {
+		assert.Equal(t, ValueNone{}.String(), "")
 	})
 
-	It("does not allow comparison", func() {
+	t.Run("returns itself", func(t *testing.T) {
+		assert.Equal(t, ValueNone{}.Value(), ValueNone{})
+	})
+
+	t.Run("does not allow comparison", func(t *testing.T) {
 		f := func() { ValueNone{}.Compare(ValueNone{}) }
-		Expect(f).To(Panic())
+		assert.Panics(t, f)
 	})
-})
+}
 
-var _ = Describe("ValueFmt", func() {
+func TestValueFmt(t *testing.T) {
 	fmtFunc := func(pattern string, vals ...interface{}) string {
 		return fmt.Sprintf(">%s<", fmt.Sprintf(pattern, vals...))
 	}
 
-	It("returns plain string (not formatted with fmt func)", func() {
-		Expect(ValueFmt{V: ValueInt{I: 1}, Func: fmtFunc}.String()).To(Equal("1"))
+	t.Run("returns plain string (not formatted with fmt func)", func(t *testing.T) {
+		assert.Equal(t, ValueFmt{V: ValueInt{I: 1}, Func: fmtFunc}.String(), "1")
 	})
 
-	It("returns wrapped value", func() {
-		Expect(ValueFmt{V: ValueInt{I: 1}, Func: fmtFunc}.Value()).To(Equal(ValueInt{I: 1}))
+	t.Run("returns wrapped value", func(t *testing.T) {
+		assert.Equal(t, ValueFmt{V: ValueInt{I: 1}, Func: fmtFunc}.Value(), ValueInt{I: 1})
 	})
 
-	It("does not allow comparison", func() {
+	t.Run("does not allow comparison", func(t *testing.T) {
 		f := func() { ValueFmt{V: ValueInt{I: 1}, Func: fmtFunc}.Compare(ValueFmt{}) }
-		Expect(f).To(Panic())
+		assert.Panics(t, f)
 	})
 
-	It("writes out value using custom Fprintf", func() {
+	t.Run("writes out value using custom Fprintf", func(t *testing.T) {
 		buf := bytes.NewBufferString("")
 		ValueFmt{V: ValueInt{I: 1}, Func: fmtFunc}.Fprintf(buf, "%s,%s", "val1", "val2")
-		Expect(buf.String()).To(Equal(">val1,val2<"))
+		assert.Equal(t, buf.String(), ">val1,val2<")
 	})
 
-	It("uses fmt.Fprintf if fmt func is not set", func() {
+	t.Run("uses fmt.Fprintf if fmt func is not set", func(t *testing.T) {
 		buf := bytes.NewBufferString("")
 		ValueFmt{V: ValueInt{I: 1}}.Fprintf(buf, "%s,%s", "val1", "val2")
-		Expect(buf.String()).To(Equal("val1,val2"))
+		assert.Equal(t, buf.String(), "val1,val2")
 	})
-})
+}
 
 type failsToYAMLMarshal struct{}
 
@@ -169,49 +168,49 @@ func (s failsToYAMLMarshal) MarshalYAML() (interface{}, error) {
 	return nil, errors.New("marshal-err")
 }
 
-var _ = Describe("ValueInterface", func() {
-	It("returns map as a string", func() {
+func TestValueInterface(t *testing.T) {
+	t.Run("returns map as a string", func(t *testing.T) {
 		i := map[string]interface{}{"key": "value", "num": 123}
-		Expect(ValueInterface{I: i}.String()).To(Equal("key: value\nnum: 123"))
+		assert.Equal(t, ValueInterface{I: i}.String(), "key: value\nnum: 123")
 	})
 
-	It("returns nested items as a string", func() {
+	t.Run("returns nested items as a string", func(t *testing.T) {
 		i := map[string]interface{}{"key": map[string]interface{}{"nested_key": "nested_value"}}
-		Expect(ValueInterface{I: i}.String()).To(Equal("key:\n  nested_key: nested_value"))
+		assert.Equal(t, ValueInterface{I: i}.String(), "key:\n  nested_key: nested_value")
 	})
 
-	It("returns nested items as a string", func() {
+	t.Run("returns nested items as a string", func(t *testing.T) {
 		i := failsToYAMLMarshal{}
-		Expect(ValueInterface{I: i}.String()).To(Equal(`<serialization error> : table_test.failsToYAMLMarshal{}`))
+		assert.Equal(t, ValueInterface{I: i}.String(), `<serialization error> : table_test.failsToYAMLMarshal{}`)
 	})
 
-	It("returns nil items as blank string", func() {
-		Expect(ValueInterface{I: nil}.String()).To(Equal(""))
+	t.Run("returns nil items as blank string", func(t *testing.T) {
+		assert.Equal(t, ValueInterface{I: nil}.String(), "")
 	})
 
-	It("returns an empty map as blank string", func() {
+	t.Run("returns an empty map as blank string", func(t *testing.T) {
 		i := map[string]interface{}{}
-		Expect(ValueInterface{I: i}.String()).To(Equal(""))
+		assert.Equal(t, ValueInterface{I: i}.String(), "")
 	})
 
-	It("returns an empty slice as blank string", func() {
+	t.Run("returns an empty slice as blank string", func(t *testing.T) {
 		i := []string{}
-		Expect(ValueInterface{I: i}.String()).To(Equal(""))
+		assert.Equal(t, ValueInterface{I: i}.String(), "")
 	})
-})
+}
 
-var _ = Describe("ValueSuffix", func() {
-	It("returns formatted string with suffix", func() {
-		Expect(ValueSuffix{V: ValueInt{I: 1}, Suffix: "*"}.String()).To(Equal("1*"))
-		Expect(ValueSuffix{V: ValueString{S: "val"}, Suffix: "*"}.String()).To(Equal("val*"))
-	})
-
-	It("returns wrapped value", func() {
-		Expect(ValueSuffix{V: ValueInt{I: 1}, Suffix: "*"}.Value()).To(Equal(ValueInt{I: 1}))
+func TestValueSuffix(t *testing.T) {
+	t.Run("returns formatted string with suffix", func(t *testing.T) {
+		assert.Equal(t, ValueSuffix{V: ValueInt{I: 1}, Suffix: "*"}.String(), "1*")
+		assert.Equal(t, ValueSuffix{V: ValueString{S: "val"}, Suffix: "*"}.String(), "val*")
 	})
 
-	It("does not allow comparison", func() {
+	t.Run("returns wrapped value", func(t *testing.T) {
+		assert.Equal(t, ValueSuffix{V: ValueInt{I: 1}, Suffix: "*"}.Value(), ValueInt{I: 1})
+	})
+
+	t.Run("does not allow comparison", func(t *testing.T) {
 		f := func() { ValueSuffix{V: ValueInt{I: 1}, Suffix: ""}.Compare(ValueSuffix{}) }
-		Expect(f).To(Panic())
+		assert.Panics(t, f)
 	})
-})
+}
