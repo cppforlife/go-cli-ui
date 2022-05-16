@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/mattn/go-isatty"
 	"github.com/vito/go-interact/interact"
@@ -96,32 +97,39 @@ func (ui *WriterUI) PrintTable(table Table) {
 	}
 }
 
-func (ui *WriterUI) AskForText(label string) (string, error) {
-	var text string
-
-	err := interact.NewInteraction(label).Resolve(&text)
+func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
+	err := interact.NewInteraction(opts.Label).Resolve(&opts.DefaultValue)
 	if err != nil {
 		return "", fmt.Errorf("Asking for text: %s", err)
 	}
 
-	return text, nil
+	return opts.DefaultValue, nil
 }
 
-func (ui *WriterUI) AskForChoice(label string, options []string) (int, error) {
-	var choices []interact.Choice
+func (ui *WriterUI) AskForChoice(opts ChoiceOpts) (int, error) {
+	var (
+		choices                    []interact.Choice
+		defaultMatchingWithChoices bool
+	)
 
-	for i, opt := range options {
+	for i, opt := range opts.Choices {
+		if opt == strconv.Itoa(opts.DefaultValue) {
+			defaultMatchingWithChoices = true
+		}
 		choices = append(choices, interact.Choice{Display: opt, Value: i})
 	}
 
-	var chosen int
+	if !defaultMatchingWithChoices {
+		return 0, fmt.Errorf("Default value: %d should match with one of the choices: %s",
+			opts.DefaultValue, opts.Choices)
+	}
 
-	err := interact.NewInteraction(label, choices...).Resolve(&chosen)
+	err := interact.NewInteraction(opts.Label, choices...).Resolve(&opts.DefaultValue)
 	if err != nil {
 		return 0, fmt.Errorf("Asking for choice: %s", err)
 	}
 
-	return chosen, nil
+	return opts.DefaultValue, nil
 }
 
 func (ui *WriterUI) AskForPassword(label string) (string, error) {

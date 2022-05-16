@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/cppforlife/go-cli-ui/ui"
 	. "github.com/cppforlife/go-cli-ui/ui/table"
 )
 
@@ -93,24 +94,24 @@ func (ui *FakeUI) PrintTable(table Table) {
 	ui.Tables = append(ui.Tables, table)
 }
 
-func (ui *FakeUI) AskForText(label string) (string, error) {
+func (ui *FakeUI) AskForText(opts ui.TextOpts) (string, error) {
 	ui.mutex.Lock()
 	defer ui.mutex.Unlock()
 
-	ui.AskedTextLabels = append(ui.AskedTextLabels, label)
+	ui.AskedTextLabels = append(ui.AskedTextLabels, opts.Label)
 	answer := ui.AskedText[0]
 	ui.AskedText = ui.AskedText[1:]
 	return answer.Text, answer.Error
 }
 
-func (ui *FakeUI) AskForChoice(label string, options []string) (int, error) {
+func (ui *FakeUI) AskForChoice(opts ui.ChoiceOpts) (int, error) {
 	ui.mutex.Lock()
 	defer ui.mutex.Unlock()
 
 	ui.AskedChoiceCalled = true
 
-	ui.AskedChoiceLabel = label
-	ui.AskedChoiceOptions = options
+	ui.AskedChoiceLabel = opts.Label
+	ui.AskedChoiceOptions = opts.Choices
 
 	chosen := ui.AskedChoiceChosens[0]
 	ui.AskedChoiceChosens = ui.AskedChoiceChosens[1:]

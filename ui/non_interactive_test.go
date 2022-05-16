@@ -91,7 +91,7 @@ func TestNonInteractiveUI(t *testing.T) {
 			parentUI := &fakeui.FakeUI{}
 			ui := NewNonInteractiveUI(parentUI)
 
-			assert.Panics(t, func() { ui.AskForText("") })
+			assert.Panics(t, func() { ui.AskForText(TextOpts{}) })
 		})
 	})
 
@@ -109,7 +109,7 @@ func TestNonInteractiveUI(t *testing.T) {
 			parentUI := &fakeui.FakeUI{}
 			ui := NewNonInteractiveUI(parentUI)
 
-			assert.Panics(t, func() { ui.AskForChoice("", nil) })
+			assert.Panics(t, func() { ui.AskForChoice(ChoiceOpts{}) })
 		})
 	})
 

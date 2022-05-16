@@ -40,11 +40,11 @@ func (ui *NonInteractiveUI) PrintTable(table Table) {
 	ui.parent.PrintTable(table)
 }
 
-func (ui *NonInteractiveUI) AskForText(label string) (string, error) {
+func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
 	panic("Cannot ask for input in non-interactive UI")
 }
 
-func (ui *NonInteractiveUI) AskForChoice(label string, options []string) (int, error) {
+func (ui *NonInteractiveUI) AskForChoice(opts ChoiceOpts) (int, error) {
 	panic("Cannot ask for a choice in non-interactive UI")
 }
 
