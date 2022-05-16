@@ -9,6 +9,6 @@ type TextOpts struct {
 // ChoiceOpts asking for choice options
 type ChoiceOpts struct {
 	Label        string
-	DefaultValue int
+	DefaultValue string
 	Choices      []string
 }

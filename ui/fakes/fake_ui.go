@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/cppforlife/go-cli-ui/ui"
+	types "github.com/cppforlife/go-cli-ui/ui"
 	. "github.com/cppforlife/go-cli-ui/ui/table"
 )
 
@@ -94,7 +94,7 @@ func (ui *FakeUI) PrintTable(table Table) {
 	ui.Tables = append(ui.Tables, table)
 }
 
-func (ui *FakeUI) AskForText(opts ui.TextOpts) (string, error) {
+func (ui *FakeUI) AskForText(opts types.TextOpts) (string, error) {
 	ui.mutex.Lock()
 	defer ui.mutex.Unlock()
 
@@ -104,7 +104,7 @@ func (ui *FakeUI) AskForText(opts ui.TextOpts) (string, error) {
 	return answer.Text, answer.Error
 }
 
-func (ui *FakeUI) AskForChoice(opts ui.ChoiceOpts) (int, error) {
+func (ui *FakeUI) AskForChoice(opts types.ChoiceOpts) (int, error) {
 	ui.mutex.Lock()
 	defer ui.mutex.Unlock()
 
