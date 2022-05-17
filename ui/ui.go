@@ -97,7 +97,7 @@ func (ui *WriterUI) PrintTable(table Table) {
 }
 
 func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
-	text := opts.DefaultValue
+	text := opts.Default
 
 	err := interact.NewInteraction(opts.Label).Resolve(&text)
 	if err != nil {
@@ -115,16 +115,16 @@ func (ui *WriterUI) AskForChoice(opts ChoiceOpts) (int, error) {
 	)
 
 	for i, opt := range opts.Choices {
-		if opt == opts.DefaultValue {
+		if opt == opts.Default {
 			chosen = i
 			defaultMatchingWithChoices = true
 		}
 		choices = append(choices, interact.Choice{Display: opt, Value: i})
 	}
 
-	if !defaultMatchingWithChoices && opts.DefaultValue != "" {
+	if !defaultMatchingWithChoices && opts.Default != "" {
 		return 0, fmt.Errorf("Default value: %s should match with one of the choices: %s",
-			opts.DefaultValue, opts.Choices)
+			opts.Default, opts.Choices)
 	}
 
 	err := interact.NewInteraction(opts.Label, choices...).Resolve(&chosen)
