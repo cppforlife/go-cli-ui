@@ -122,7 +122,7 @@ func (ui *WriterUI) AskForChoice(opts ChoiceOpts) (int, error) {
 		choices = append(choices, interact.Choice{Display: opt, Value: i})
 	}
 
-	if !defaultMatchingWithChoices {
+	if !defaultMatchingWithChoices && opts.DefaultValue != "" {
 		return 0, fmt.Errorf("Default value: %s should match with one of the choices: %s",
 			opts.DefaultValue, opts.Choices)
 	}
