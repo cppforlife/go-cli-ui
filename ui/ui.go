@@ -97,8 +97,6 @@ func (ui *WriterUI) PrintTable(table Table) {
 }
 
 func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
-	var text string
-
 	if opts.ValidateFunc == nil {
 		opts.ValidateFunc = func(s string) (bool, string, error) {
 			return true, "", nil
@@ -106,7 +104,7 @@ func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
 	}
 
 	for {
-		text = opts.Default
+		text := opts.Default
 		err := interact.NewInteraction(opts.Label).Resolve(&text)
 		if err != nil {
 			return "", fmt.Errorf("Asking for text: %s", err)
@@ -114,7 +112,7 @@ func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
 
 		isValid, message, err := opts.ValidateFunc(text)
 		if err != nil {
-			return "", fmt.Errorf("Validation Error: %s", message)
+			return "", fmt.Errorf("Validation error: %s", message)
 		}
 		if isValid {
 			return text, nil

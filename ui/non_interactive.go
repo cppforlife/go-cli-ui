@@ -46,7 +46,7 @@ func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
 	if opts.ValidateFunc != nil {
 		isValid, message, err := opts.ValidateFunc(opts.Default)
 		if err != nil || !isValid {
-			return "", fmt.Errorf("Validation Error: %s", message)
+			return "", fmt.Errorf("Validation error: %s", message)
 		}
 	}
 	return opts.Default, nil
@@ -54,7 +54,7 @@ func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
 
 func (ui *NonInteractiveUI) AskForChoice(opts ChoiceOpts) (int, error) {
 	if opts.Default >= len(opts.Choices) || opts.Default < 0 {
-		return 0, fmt.Errorf("Default value should be index and must be in (0-%d)\n", len(opts.Choices)-1)
+		return 0, fmt.Errorf("Default value should be index and must be in (0-%d)", len(opts.Choices)-1)
 	}
 	return opts.Default, nil
 }
