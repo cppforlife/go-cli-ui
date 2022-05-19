@@ -95,11 +95,11 @@ func TestNonInteractiveUI(t *testing.T) {
 			text, err := ui.AskForText(TextOpts{
 				Label:   "",
 				Default: "foo",
-				ValidateFunc: func(s string) (bool, error) {
+				ValidateFunc: func(s string) (bool, string, error) {
 					if s == "" {
-						return false, fmt.Errorf("should not be empty")
+						return false, "", fmt.Errorf("should not be empty")
 					}
-					return true, nil
+					return true, "", nil
 				},
 			})
 
@@ -113,11 +113,11 @@ func TestNonInteractiveUI(t *testing.T) {
 			text, err := ui.AskForText(TextOpts{
 				Label:   "",
 				Default: "",
-				ValidateFunc: func(s string) (bool, error) {
+				ValidateFunc: func(s string) (bool, string, error) {
 					if s == "" {
-						return false, fmt.Errorf("should not be empty")
+						return false, "", fmt.Errorf("should not be empty")
 					}
-					return true, nil
+					return true, "", nil
 				},
 			})
 
@@ -144,35 +144,10 @@ func TestNonInteractiveUI(t *testing.T) {
 				Label:   "",
 				Default: 1,
 				Choices: []string{"a", "b", "c"},
-				ValidateFunc: func(i int) (bool, error) {
-					if i < 0 {
-						return false, fmt.Errorf("default should not be negative")
-					}
-					return true, nil
-				},
 			})
 
 			assert.Equal(t, choice, 1)
 			assert.Nil(t, err)
-		})
-		t.Run("negative default value", func(t *testing.T) {
-			parentUI := &fakeui.FakeUI{}
-			ui := NewNonInteractiveUI(parentUI)
-
-			choice, err := ui.AskForChoice(ChoiceOpts{
-				Label:   "",
-				Default: -1,
-				Choices: []string{"a", "b", "c"},
-				ValidateFunc: func(i int) (bool, error) {
-					if i < 0 {
-						return false, fmt.Errorf("default should not be negative")
-					}
-					return true, nil
-				},
-			})
-
-			assert.Equal(t, choice, 0)
-			assert.NotNil(t, err)
 		})
 	})
 

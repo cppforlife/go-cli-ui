@@ -44,9 +44,9 @@ func (ui *NonInteractiveUI) PrintTable(table Table) {
 
 func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
 	if opts.ValidateFunc != nil {
-		isValid, err := opts.ValidateFunc(opts.Default)
+		isValid, message, err := opts.ValidateFunc(opts.Default)
 		if err != nil || !isValid {
-			return "", err
+			return "", fmt.Errorf("Validation Error: %s", message)
 		}
 	}
 	return opts.Default, nil
@@ -55,13 +55,6 @@ func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
 func (ui *NonInteractiveUI) AskForChoice(opts ChoiceOpts) (int, error) {
 	if opts.Default >= len(opts.Choices) || opts.Default < 0 {
 		return 0, fmt.Errorf("Default value should be index and must be in (0-%d)\n", len(opts.Choices)-1)
-	}
-
-	if opts.ValidateFunc != nil {
-		isValid, err := opts.ValidateFunc(opts.Default)
-		if err != nil || !isValid {
-			return 0, err
-		}
 	}
 	return opts.Default, nil
 }
