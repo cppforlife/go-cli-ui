@@ -4,7 +4,7 @@ package ui
 type TextOpts struct {
 	Label   string
 	Default string
-	// ValidateFunc: method to validate input and default value
+	// ValidateFunc: method to validate input/default value
 	ValidateFunc func(string) (bool, error)
 }
 
@@ -13,6 +13,6 @@ type ChoiceOpts struct {
 	Label   string
 	Default int
 	Choices []string
-	// ValidateFunc: method to validate input and default value
+	// ValidateFunc: method to validate input/default value
 	ValidateFunc func(int) (bool, error)
 }

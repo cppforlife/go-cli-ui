@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+
 	. "github.com/cppforlife/go-cli-ui/ui/table"
 )
 
@@ -51,6 +53,10 @@ func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
 }
 
 func (ui *NonInteractiveUI) AskForChoice(opts ChoiceOpts) (int, error) {
+	if opts.Default >= len(opts.Choices) || opts.Default < 0 {
+		return 0, fmt.Errorf("Default value should be index and must be in (0-%d)\n", len(opts.Choices)-1)
+	}
+
 	if opts.ValidateFunc != nil {
 		isValid, err := opts.ValidateFunc(opts.Default)
 		if err != nil || !isValid {
