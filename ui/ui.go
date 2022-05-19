@@ -97,11 +97,22 @@ func (ui *WriterUI) PrintTable(table Table) {
 }
 
 func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
-	text := opts.Default
+	var text string
 
-	err := interact.NewInteraction(opts.Label).Resolve(&text)
-	if err != nil {
-		return "", fmt.Errorf("Asking for text: %s", err)
+	for {
+		text = opts.Default
+		err := interact.NewInteraction(opts.Label).Resolve(&text)
+		if err != nil {
+			return "", fmt.Errorf("Asking for text: %s", err)
+		}
+
+		if opts.ValidateFunc != nil {
+			isValid, err := opts.ValidateFunc(text)
+			if isValid {
+				break
+			}
+			ui.PrintErrorBlock(err.Error())
+		}
 	}
 
 	return text, nil
@@ -109,27 +120,28 @@ func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
 
 func (ui *WriterUI) AskForChoice(opts ChoiceOpts) (int, error) {
 	var (
-		choices                    []interact.Choice
-		defaultMatchingWithChoices bool
-		chosen                     int
+		choices []interact.Choice
+		chosen  int
 	)
 
 	for i, opt := range opts.Choices {
-		if opt == opts.Default {
-			chosen = i
-			defaultMatchingWithChoices = true
-		}
 		choices = append(choices, interact.Choice{Display: opt, Value: i})
 	}
 
-	if !defaultMatchingWithChoices && opts.Default != "" {
-		return 0, fmt.Errorf("Default value: %s should match with one of the choices: %s",
-			opts.Default, opts.Choices)
-	}
+	for {
+		chosen = opts.Default
+		err := interact.NewInteraction(opts.Label, choices...).Resolve(&chosen)
+		if err != nil {
+			return 0, fmt.Errorf("Asking for choice: %s", err)
+		}
 
-	err := interact.NewInteraction(opts.Label, choices...).Resolve(&chosen)
-	if err != nil {
-		return 0, fmt.Errorf("Asking for choice: %s", err)
+		if opts.ValidateFunc != nil {
+			isValid, err := opts.ValidateFunc(chosen)
+			if isValid {
+				break
+			}
+			ui.PrintErrorBlock(err.Error())
+		}
 	}
 
 	return chosen, nil

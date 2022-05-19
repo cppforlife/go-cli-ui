@@ -41,11 +41,23 @@ func (ui *NonInteractiveUI) PrintTable(table Table) {
 }
 
 func (ui *NonInteractiveUI) AskForText(opts TextOpts) (string, error) {
-	panic("Cannot ask for input in non-interactive UI")
+	if opts.ValidateFunc != nil {
+		isValid, err := opts.ValidateFunc(opts.Default)
+		if err != nil || !isValid {
+			return "", err
+		}
+	}
+	return opts.Default, nil
 }
 
 func (ui *NonInteractiveUI) AskForChoice(opts ChoiceOpts) (int, error) {
-	panic("Cannot ask for a choice in non-interactive UI")
+	if opts.ValidateFunc != nil {
+		isValid, err := opts.ValidateFunc(opts.Default)
+		if err != nil || !isValid {
+			return 0, err
+		}
+	}
+	return opts.Default, nil
 }
 
 func (ui *NonInteractiveUI) AskForPassword(label string) (string, error) {

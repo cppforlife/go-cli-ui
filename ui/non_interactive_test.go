@@ -1,6 +1,7 @@
 package ui_test
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/cppforlife/go-cli-ui/ui"
@@ -87,11 +88,41 @@ func TestNonInteractiveUI(t *testing.T) {
 	})
 
 	t.Run("AskForText", func(t *testing.T) {
-		t.Run("panics", func(t *testing.T) {
+		t.Run("default non empty", func(t *testing.T) {
 			parentUI := &fakeui.FakeUI{}
 			ui := NewNonInteractiveUI(parentUI)
 
-			assert.Panics(t, func() { ui.AskForText(TextOpts{}) })
+			text, err := ui.AskForText(TextOpts{
+				Label:   "",
+				Default: "foo",
+				ValidateFunc: func(s string) (bool, error) {
+					if s == "" {
+						return false, fmt.Errorf("should not be empty")
+					}
+					return true, nil
+				},
+			})
+
+			assert.Equal(t, text, "foo")
+			assert.Nil(t, err)
+		})
+		t.Run("default empty", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			text, err := ui.AskForText(TextOpts{
+				Label:   "",
+				Default: "",
+				ValidateFunc: func(s string) (bool, error) {
+					if s == "" {
+						return false, fmt.Errorf("should not be empty")
+					}
+					return true, nil
+				},
+			})
+
+			assert.Equal(t, text, "")
+			assert.NotNil(t, err)
 		})
 	})
 
@@ -105,11 +136,43 @@ func TestNonInteractiveUI(t *testing.T) {
 	})
 
 	t.Run("AskForChoice", func(t *testing.T) {
-		t.Run("panics", func(t *testing.T) {
+		t.Run("non negative default value", func(t *testing.T) {
 			parentUI := &fakeui.FakeUI{}
 			ui := NewNonInteractiveUI(parentUI)
 
-			assert.Panics(t, func() { ui.AskForChoice(ChoiceOpts{}) })
+			choice, err := ui.AskForChoice(ChoiceOpts{
+				Label:   "",
+				Default: 1,
+				Choices: []string{"a", "b", "c"},
+				ValidateFunc: func(i int) (bool, error) {
+					if i < 0 {
+						return false, fmt.Errorf("default should not be negative")
+					}
+					return true, nil
+				},
+			})
+
+			assert.Equal(t, choice, 1)
+			assert.Nil(t, err)
+		})
+		t.Run("negative default value", func(t *testing.T) {
+			parentUI := &fakeui.FakeUI{}
+			ui := NewNonInteractiveUI(parentUI)
+
+			choice, err := ui.AskForChoice(ChoiceOpts{
+				Label:   "",
+				Default: -1,
+				Choices: []string{"a", "b", "c"},
+				ValidateFunc: func(i int) (bool, error) {
+					if i < 0 {
+						return false, fmt.Errorf("default should not be negative")
+					}
+					return true, nil
+				},
+			})
+
+			assert.Equal(t, choice, 0)
+			assert.NotNil(t, err)
 		})
 	})
 
