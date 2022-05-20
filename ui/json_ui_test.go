@@ -310,7 +310,7 @@ func TestJSONUI(t *testing.T) {
 			parentUI := &fakeui.FakeUI{}
 			ui := NewJSONUI(parentUI, NewRecordingLogger())
 
-			assert.Panics(t, func() { ui.AskForText("") })
+			assert.Panics(t, func() { ui.AskForText(TextOpts{}) })
 		})
 	})
 
@@ -328,7 +328,7 @@ func TestJSONUI(t *testing.T) {
 			parentUI := &fakeui.FakeUI{}
 			ui := NewJSONUI(parentUI, NewRecordingLogger())
 
-			assert.Panics(t, func() { ui.AskForChoice("", nil) })
+			assert.Panics(t, func() { ui.AskForChoice(ChoiceOpts{}) })
 		})
 	})
 
