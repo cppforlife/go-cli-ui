@@ -112,10 +112,15 @@ func (ui *WriterUI) AskForText(opts TextOpts) (string, error) {
 
 		isValid, message, err := opts.ValidateFunc(text)
 		if err != nil {
-			return "", fmt.Errorf("Validation error: %s", message)
+			return "", fmt.Errorf("Validation input: %s", err)
 		}
 		if isValid {
 			return text, nil
+		} else {
+			if len(message) == 0 {
+				message = "(reason for failure not specified)"
+			}
+			ui.ErrorLinef("Failed validation: %s", message)
 		}
 	}
 }
