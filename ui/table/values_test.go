@@ -179,9 +179,15 @@ func TestValueInterface(t *testing.T) {
 		assert.Equal(t, ValueInterface{I: i}.String(), "key:\n  nested_key: nested_value")
 	})
 
-	t.Run("returns nested items as a string", func(t *testing.T) {
+	// Tests contract specified here: https://github.com/go-yaml/yaml/blob/v3/yaml.go#L44-L52
+	t.Run("respects Marshaller interface", func(t *testing.T) {
 		i := failsToYAMLMarshal{}
 		assert.Equal(t, ValueInterface{I: i}.String(), `<serialization error> : table_test.failsToYAMLMarshal{}`)
+	})
+
+	t.Run("returns error on failure", func(t *testing.T) {
+		i := map[string]interface{}{"foo": make(chan int)}
+		assert.Contains(t, ValueInterface{I: i}.String(), `<serialization error> :`)
 	})
 
 	t.Run("returns nil items as blank string", func(t *testing.T) {
