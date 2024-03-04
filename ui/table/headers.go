@@ -21,6 +21,7 @@ func (t *Table) SetColumnVisibility(headers []Header) error {
 		t.Header[tableHeaderIdx].Hidden = true
 	}
 
+	missingHeaders := []string{}
 	for _, header := range headers {
 		foundHeader := false
 
@@ -34,11 +35,17 @@ func (t *Table) SetColumnVisibility(headers []Header) error {
 		}
 
 		if !foundHeader {
-			// key may be empty; if title is present
-			return fmt.Errorf("Failed to find header: %s", header.Key)
+			if header.Key != "" {
+				missingHeaders = append(missingHeaders, header.Key)
+			} else if header.Title != "" {
+				missingHeaders = append(missingHeaders, header.Title)
+			}
 		}
 	}
 
+	if len(missingHeaders) > 0 {
+		return fmt.Errorf("failed to find following headers: %s", strings.Join(missingHeaders, ", "))
+	}
 	return nil
 }
 
