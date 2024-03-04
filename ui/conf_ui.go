@@ -82,7 +82,7 @@ func (ui *ConfUI) PrintTable(table Table) {
 	if len(ui.showColumns) > 0 {
 		err := table.SetColumnVisibility(ui.showColumns)
 		if err != nil {
-			panic(err)
+			ui.parent.PrintErrorBlock(err.Error())
 		}
 	}
 

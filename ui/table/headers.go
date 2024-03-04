@@ -44,7 +44,7 @@ func (t *Table) SetColumnVisibility(headers []Header) error {
 	}
 
 	if len(missingHeaders) > 0 {
-		return fmt.Errorf("failed to find following headers: %s", strings.Join(missingHeaders, ", "))
+		return fmt.Errorf("warning: failed to find following headers: %s", strings.Join(missingHeaders, ", "))
 	}
 	return nil
 }
